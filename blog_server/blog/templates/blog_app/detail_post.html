@@ -1,0 +1,174 @@
+{% extends 'blog_app/base.html' %}
+{% load static %}
+
+{% block title %}DetailPost{% endblock %}
+
+{% block content %}
+    <!-- content block -->
+    <div class="container mt-3 article">
+      
+      <!-- top block -->
+      <div class="card text-white article-content">
+        <div class="d-flex justify-content-center">
+          <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+        </div>
+
+        {% if user.is_superuser %}
+          <div class="container mt-3">
+            <a type="button" class="btn btn-success my-2 my-sm-0" href="{% url 'blog_app:edit_article' article_slug=article.slug %}">Edit post</a>
+          </div>
+        {% endif %}
+
+        <div class="card-body">
+          <h4 class="card-title">{{ article.title }}</h4>
+          <div class="container mb-3 ml-3 shorttext">
+            <p>{{ article.intro }}</p>
+          </div>
+
+          <div class="container mb-3 article-text">
+            <p class="w-100">
+              {{ article.text }}
+            </p>
+          </div>
+
+          <div class="container">
+            <span class="badge badge-dark mb-2">{{ article.date }}</span>
+          </div>
+
+          <!-- Tags -->
+          <div class="container d-flex flex-row flex-wrap justify-content-start">
+            {% with article.tags.all as tags %}
+              {% if tags %}
+                {% for tag in tags %}
+                  <a type="button" href="#!" class="btn btn-outline-success article-tag">
+                    <b>{{ tag.name }}</b>
+                  </a>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+          </div>
+          
+          <div class="comment-panel mt-1 d-flex flex-row justify-content-between">
+            <div class="like-comment">
+              <div class="container d-flex flex-row">
+                <a type="button" class="d-flex flex-row btn-like-comment" id="{{article.id}}"  onclick="article_like_request(this)">
+                  <div>
+                    <img src="{% static 'icons/like.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                  </div>
+                  <p>{{ article.get_likes }}</p>
+                </a>
+                <a type="button" class="d-flex flex-row btn-like-comment">
+                  <div>
+                    <img src="{% static 'icons/comment.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                  </div>
+                  <p>{{ article.get_comments }}</p>
+                </a>
+              </div>
+            </div>
+
+            <div class="views ">
+              <span class="badge badge-dark align-bottom">
+              <img src="{% static 'icons/views.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+              {{ article.get_views }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      {% if article.comments_on %}
+        <div class="container">
+          <div class="row justify-content-center">
+            <span class="badge badge-success py-1 px-5 mb-3" style="font-size: 24px">Комментарии
+            </span>
+          </div>
+
+
+          <!-- form create comment -->
+          <div>
+          <div class="row justify-content-center">
+            <div class="col-lg-9 col-md-9 col-sm-12">
+              {% if user.is_authenticated %}
+                <form id="comment_form" name="{{ article.id }}" class="{{ article.slug }}" onsubmit="send_ajax_comment(this, event)" enctype="multipart/form-data" novalidate="true">
+                  {% csrf_token %}
+                  <label for="{{ comment_form.parrent.id_for_label }}"></label>
+                  {{ comment_form.parrent }}
+                  <label for="{{ comment_form.text.id_for_label }}"></label>
+                  {{ comment_form.text }}
+                  <button type="submit" class="btn btn-success my-2 my-sm-0">Send</button>
+                </form>
+              {% else %}
+                <div class="alert alert-warning alert-dismissible fade show d-flex flex-row" role="alert"
+                    style="margin-top: 50px;">
+                  <p>Для создания комментриев необходимо быть авторизованным пользователем.</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Commentaries -->
+          <div class="row">
+              <div class="container mt-3 text-white">
+                <div class="row d-flex align-content-center flex-column" id="comment-block">
+                  {% for comm in comment %}
+                      <div class="col-lg-6 col-md-9 col-sm-12 media mt-2 mb-2 w-100 comment-body" id="{{ comm.id }}">
+                        <div class="media-body">
+                          <div class="top-comment d-flex justify-content-between">
+                            <div class="container d-flex">
+                              <img class="d-flex" src="{{ comm.author.avatar.image.url }}" alt="Generic placeholder image" height="32" width="32">
+                              <h5 class="mt-0">{{ comm.author.username }}</h5>
+                            </div>
+                            <div name="{{ article.slug }}">
+                              <a type="button" class="btn btn-outline-success btn-like-comment" id="{{ article.slug }}" name="{{ comm.id }}" onclick="deleteComment(this)">
+                                <p>Удалить</p>
+                              </a>
+                            </div>
+                          </div>
+                          {% if comm.parrent_comm %}
+                            <div class="container d-flex reply-to">
+                              <p>Ответил:</p>
+                              <a href="#{{ comm.parrent_comm.id }}">@{{ comm.parrent_comm.author.username }}</a>
+                            </div>
+                          {% endif %}
+                          <div class="comment-text">
+                            <p>
+                              {{ comm.text }}
+                            </p>
+                          </div>
+                          <div class="comment-panel mt-1 d-flex flex-row justify-content-between">
+                            <div class="like-comment">
+                              <div class="container d-flex flex-row">
+                                <a type="button" class="btn btn-outline-success d-flex flex-row btn-like-comment" name="{{ comm.id }}" onclick="addLikeComment(this)">
+                                  <div>
+                                    <img src="{% static 'icons/like.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                                  </div>
+                                  <p>{{ comm.get_likes }}</p>
+                                </a>
+                                <a type="button" class="btn btn-outline-success btn-like-comment" id="{{ comm.id }}" onclick="looked_form(this)" href="#comment_form">
+                                  <img src="{% static 'icons/comment.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                                  <p>Ответить</p>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        <div class="end-comment-line"></div>
+                      </div>
+                    </div>
+                  {% endfor %}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="container">
+          <div class="row justify-content-center">
+            <span class="badge badge-success py-1 px-5 mb-3" style="font-size: 24px">Commentaries disabled by administrator
+            </span>
+          </div>
+        </div>
+      {% endif %}      
+    </div>
+{% endblock %}
+

@@ -1,0 +1,65 @@
+{% extends 'blog_app/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="card article">
+            <div class="container mt-3">
+                <div class="img-field">
+                    <img class="img-fluid mt-2 ml-2" src="{{ user.avatar.image.url }}" alt="Card image cap" height="64" width="64">
+                </div>
+                <a type="button" class="btn btn-primary btn-sm" onclick="show_change_avatar()">Change avatar</a>
+            </div>
+
+            <div class="card-body">
+                <h4 class="card-title">Profile</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="form-ava" id="avatar-choices-form-registration" style="display: none;">
+                          <h4 class="mb-3">Select Avatar</h4>
+                          {% for item in form.avatar.field.queryset %}
+                            <div class="radio-avatar">
+                                <input class="form-check-input" type="radio" name="avatar" value="{{item.pk}}" id="avatar-name">
+                                <label class="form-check-label" for="avatar-name"></label>
+                                <img class="img-fluid mt-2 ml-2" src="{{ item.image.url }}" alt="Card image cap" height="64" width="64">
+                            </div>
+                          {% endfor %}
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p><label for="{{ form.firstname.id_for_label }}">Имя</label></p>
+                        </div>
+                        <div class="field-value">
+                            {{ form.first_name }}
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p><label for="{{ form.lastname.id_for_label }}">Фамилия</label></p>
+                        </div>
+                        <div class="field-value">
+                            {{ form.last_name }}
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p><label for="{{ form.email.id_for_label }}">Почта</label></p>
+                        </div>
+                        <div class="field-value">
+                            {{ form.email }}
+                        </div>
+                    </div>
+                    <div class="container">
+                        <p>
+                            <a href="{% url 'users:password_reset' %}">Change password</a>
+                        </p>
+                    </div>
+                    <button type="submit" name="change_user_form" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,262 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+  <div class="container-fulid">
+    <div class="row">
+      <div class="col-12">
+        <header class="sticky-top bg-dark text-white" id="navigation-panel">
+            <div class="container-fullid" id="top-bar">
+                <div class="row">
+                    <div class="col-lg-12 d-flex justify-content-around align-items-center">
+                        <div class="left-side">
+                            <div class="nav-block">
+                                <a class="navbar-brand" href="{% url 'index' %}">F1end</a>
+                                <a type="button" data-bs-toggle="modal" data-bs-target="#exampleModalAboutMe">About me</a>
+                            </div>
+                        </div>
+                        <div class="right-side">
+                            <div class="right-block">
+                              <div class="dropdown">
+                                <a class="btn btn-outline-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Tag navigation
+                                </a>
+                              
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                  {% for tag in tag_list %}
+                                    <li><a class="dropdown-item" type="button" href="{% url 'blog_app:article_filter' tag.name %}">{{ tag.name }}</a></li>
+                                  {% endfor %}
+                                </ul>
+                              </div>
+                            </div>
+                            <div class="user-block">
+                              {% if user.is_authenticated %}
+                                
+                                <div class="dropdown">
+                                  <a class="nav-link active d-flex flex-column align-items-center" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="{{ user.avatar.image.url }}" width="32" height="32" alt="">
+                                    {{ user.username }}
+                                  </a>
+                                
+                                  <ul class="dropdown-menu menu-bar" aria-labelledby="dropdownMenuLink">
+                                    {% if user.is_superuser %}
+                                      <li><a class="dropdown-item" href="{% url 'blog_app:create_article' %}">CreateArticle</a></li>
+                                      <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModalViewNonPublished">No published</a></li>
+                                    {% endif %}
+                                    <li><a class="dropdown-item" href="{% url 'users:profile' user.id %}">Profile</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'users:logout' %}">Exit</a></li>
+                                  </ul>
+                                </div>
+                              {% else %}
+                                <a type="button" class="btn btn-primary" href="{% url 'users:login' %}">Sign In</a>
+                              {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container mt-3">
+
+          <!-- modals -->
+          <div class="row">
+            <div class="col-12">
+              <!-- About me modal -->
+              <div class="modal fade" id="exampleModalAboutMe" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content modal-screen text-white">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">About Me</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container-fulid">
+                        <!--about me text-->
+                        <div class="row">
+                          <div class="col-12">
+                            {{ about_me.about_me }}
+                          </div>
+                        </div>
+                        <!--my stack-->
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="mb-2 mt-2">
+                              <h4 class="ml-3">Using technologies</h4>
+                            </div>
+                            <div class="d-flex flex-wrap align-content-around">
+                              {% for item in tecnologies %}
+                                <div class="ml-2 mb-2">
+                                  <a class="d-flex flex-column align-items-center" href="{{ item.link }}">
+                                    <img src="{{ item.logo.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image"  height="32" width="32">
+                                    <h6>
+                                      <span class="badge" style="color: purple;">{{ item.name }}</span>
+                                    </h6>
+                                  </a>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+
+                        <!--my inks-->
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="mb-2 mt-2">
+                              <h4 class="ml-3">My Links</h4>
+                            </div>
+                            <div class="d-flex flex-wrap align-content-around">
+                              {% for item in links %}
+                                <div class="ml-2 mb-2">
+                                  <a class="d-flex flex-column align-items-center" href="{{ item.link }}">
+                                    <img src="{{ item.logo.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image"  height="32" width="32">
+                                    <h6>
+                                      <span class="badge" style="color: purple;">{{ item.name }}</span>
+                                    </h6>
+                                  </a>
+                                </div>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+                        
+                      </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {% if no_published_articles %}
+                <!--modal no published -->
+                <div class="modal fade" id="exampleModalViewNonPublished" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content modal-screen text-white">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">About Me</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <div class="container-fulid">
+                          {% for article in no_published_articles %}
+                            <div class="card mt-3 w-100 bg-dark text-white" style="width: 18rem;">
+                              <div class="card-body">
+                                <h5 class="card-title">{{ article.title }}</h5>
+                                <h6 class="card-subtitle mb-2 text-body-secondary">{{ article.date }}</h6>
+                                <p class="card-text">{{ article.intro }}</p>
+                                <a href="{% url 'blog_app:article' article_slug=article.slug %}" class="card-link">view</a>
+                                <a href="#" class="card-link">set</a>
+                              </div>
+                            </div>
+                          {% endfor %}
+
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+
+              
+              <!--modal create post-->
+              <div class="modal fade" id="exampleModalCreatePost" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Sign In</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="container-fulid">
+                        <div class="row">
+                          <div class="col-12">
+                            <form action="" method="post" enctype="multipart/form-data">
+                              {% csrf_token %}
+                              <div class="form-group">
+                                {{ form_create_post.image }}
+                                <label class="custom-file-label" for="{{ form_create_post.image.id_for_label }}">Image</label>
+                              </div>
+                              <div class="form-group">
+                                <label for="{{ form_create_post.title.id_for_label }}">Title</label>
+                                {{ form_create_post.title }}
+                              </div>
+                              <div class="form-group">
+                                <label for="{{ form_create_post.short_text.id_for_label }}">Short text</label>
+                                {{ form_create_post.shorttext }}
+                              </div>
+                              <div class="form-group">
+                                <label for="{{ form_create_post.post_text.id_for_label }}">Body post</label>
+                                {{ form_create_post.text }}
+                              </div>
+                              <div class="form-group" id="input-tags">
+                                <label for="{{ form_create_post.post_tags.id_for_labael }}">Tags</label>
+                                {{ form_create_post.post_tags }}
+                                
+                              </div>
+                              <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle"
+                                        type="button" id="dropdownMenu1" data-bs-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                  Dropdown
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                  {% for tag in tags %}
+                                  <button type="button" class="btn btn-link" value="{{ tag.name }}" id="1001" onclick="select_tag(this)">{{ tag.name }}</button>
+                                  {% endfor %}
+                                </div>
+                              </div>
+                              <div class="form-group mt-4 mb-0">
+                                <input class="btn btn-primary btn-block" type="submit" name="create_post_form" value="Создать POST">
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                      <button class="btn btn-primary" data-bs-target="#exampleModalRegistration" data-bs-toggle="modal">Registration</button>
+                      <button type="submit" form="form-login" name="login_form" class="btn btn-primary">Sign In</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- content -->
+          <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 col-sm-12">
+              {% block content %}
+              {% endblock %}
+            </div>
+          </div>        
+        </div>
+        
+        
+      </div>
+    </div>
+  </div>
+  <script src="{% static 'bootstrap/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'script.js' %}"></script>
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,81 @@
+  {% extends 'blog_app/base.html' %}
+{% load static %}
+
+
+{% block title %}GeneralPage{% endblock %}
+
+
+{% block content %}
+    <!--Errors-->
+    {% if errors %}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin-top: 50px;">
+        {{ errors }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {% endif %}
+    
+    <!--content-->
+    {% for post in articles %}
+            <div class="container bg-dark d-flex flex-column article">
+              <div class="row">
+                <div class="col">
+                  <img src="{{ post.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="300" width="500">
+                </div>
+                <div class="col-sm">
+                  <h4 class="card-title mt-2">{{ post.title }}</h4>
+                  <span class="badge badge-dark mb-2">{{ post.date }}</span>
+                  <p class="text-break font-italic">
+                    {{ post.intro }}
+                  </p>
+                </div>
+              </div>
+              <!-- Tags -->
+              <div class="row ml-2 mb-2">
+                <div class="col-12 d-flex flex-row">
+                  {% with post.tags.all as tags %}
+                    {% if tags %}
+                      {% for tag in tags %}
+                        <div class="tag-container">
+                          <a href="#!" class="btn btn-outline-success article-tag"><b>{{ tag.name }}</b></a>
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                </div>
+              </div>
+              <div class="row mt-2 mb-2">
+                <div class="col-12 d-flex justify-content-center">
+                  <a href="{% url 'blog:article' article_slug=post.slug %}" class="btn btn-outline-success">Read more</a>
+                </div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-sm d-flex justify-content-between">
+                  <div>
+                    <div class="container d-flex flex-row">
+                        <a type="button" class="d-flex flex-row btn-like-comment" id="{{ post.id }}" onclick="article_like_request(this)">
+                          <div>
+                            <img src="{% static 'icons/like.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                          </div>
+                          <p>{{ post.get_likes }}</p>
+                        </a>
+                        <a type="button" class="d-flex flex-row btn-like-comment" href="{% url 'blog:article' article_slug=post.slug %}">
+                          <img src="{% static 'icons/comment.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                          <p>{{ post.get_comments }}</p>
+                        </a>
+                      </div>
+                  </div>
+                  <div class="btn-like-comment">
+                    <img src="{% static 'icons/views.png' %}" class="img-fluid" width="24" height="24" alt="Responsive image">
+                    <p>
+                      {{ post.get_views }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+    {% endfor %}
+{% endblock %}
+
+

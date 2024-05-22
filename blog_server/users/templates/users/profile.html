@@ -1,0 +1,62 @@
+{% extends 'blog_app/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container mt-3">
+        <div class="card article">
+            <div class="card-body">
+                <h4 class="card-title">Profile - {{ user.first_name }} {{user.username}} {{ user.last_name }}</h4>
+                <div class="container">
+                    <div class="img-field">
+                        <img class="img-fluid mt-2 ml-2" src="{{ user.avatar.image.url }}" alt="Card image cap" height="64" width="64">
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p>Ник:</p>
+                        </div>
+                        <div class="field-value">
+                            <p>{{ user.username }}</p>
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p>Имя:</p>
+                        </div>
+                        <div class="field-value">
+                            <p>{{ user.first_name }}</p>
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p>Фамилия:</p>
+                        </div>
+                        <div class="field-value">
+                            <p>{{ user.last_name }}</p>
+                        </div>
+                    </div>
+                    <div class="profile-field">
+                        <div class="field-name">
+                            <p>Почта:</p>
+                        </div>
+                        <div class="field-value">
+                            <p>{{ user.email }}</p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="container d-flex flex-row justify-content-around">
+                    <a type="button" class="btn btn-outline-success btn-sm" href="{% url 'users:password_reset' %}">
+                        Сменить<br>пароль
+                    </a>
+                    <a type="button" class="btn btn-outline-success btn-sm" href="{% url 'users:profile_edit' user.id %}">
+                        Редактировать<br>профиль
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

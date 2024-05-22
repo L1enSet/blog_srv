@@ -1,0 +1,47 @@
+{% extends 'blog_app/base.html' %}
+{% load static %}
+
+{% block title %}DetailPost{% endblock %}
+
+{% block content %}
+    <!-- content block -->
+    <div class="container mt-3">
+        <div class="card-body">
+                <h4 class="card-title">Edit Article</h4>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group mb-2">
+                        <label for="{{ form.image.id_for_label }}">Image</label>
+                        {{ form.image }}
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="{{ form.title.id_for_label }}">Title</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="{{ form.intro.id_for_label }}">Intro</label>
+                        {{ form.intro }}
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="{{ form.text.id_for_label }}">Text</label>
+                        {{ form.text }}
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="{{ form.tags.id_for_label }}">Tags</label>
+                        {{ form.tags }}
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="{{ form.comments_on.id_for_label }}">Comments</label>
+                        {{ form.comments_on }}
+                    </div>
+                    <div class="form-group mb-2">
+                        <label for="{{ form.is_published.id_for_label }}">Published</label>
+                        {{ form.is_published }}
+                    </div>
+                    <button type="submit" name="change_user_form" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+
+    </div>
+{% endblock %}
+

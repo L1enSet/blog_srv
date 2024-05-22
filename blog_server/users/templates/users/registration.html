@@ -1,0 +1,105 @@
+{% load static %}
+{% load zip_list %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    <div class="container">
+        {% if form.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin-top: 50px;">
+                {{ form.errors }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <form id="form-login" action="" method="post">
+                            {% csrf_token %}
+                            <div class="row">
+
+                            </div>
+                            <div class="row">
+                                <div class="form-ava">
+                                    {% for item in form.avatar.field.queryset %}
+                                        <div class="radio-avatar">
+                                          <input class="form-check-input" type="radio" name="avatar" value="{{item.pk}}" id="avatar-name">
+                                          <label class="form-check-label" for="avatar-name"></label>
+                                          <img class="img-fluid mt-2 ml-2" src="{{ item.image.url }}" alt="Card image cap" height="64" width="64">
+                                        </div>
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.username.id_for_label }}">Логин</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.username }}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.first_name.id_for_label }}">Имя</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.first_name }}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.last_name.id_for_label }}">Фамилия</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.last_name }}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.email.id_for_label }}">Почта</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.email }}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.password1.id_for_label }}">Пароль</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.password1 }}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.password2.id_for_label }}">Повтор пароля</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.password2 }}
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    <div class="container d-flex justify-content-between">
+                        <a class="btn btn-primary" href="{% url 'users:login' %}">Вход</a>
+                        <button type="submit" form="form-login" name="login_form" class="btn btn-primary">Создать аккаунт</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

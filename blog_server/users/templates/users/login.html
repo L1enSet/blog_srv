@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12">
+                        <form id="form-login" action="" method="post">
+                            {% csrf_token %}
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.username.id_for_label }}">Логин</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.username }}
+                                </div>
+                            </div>
+                            <div class="profile-field">
+                                <div class="field-name">
+                                    <p><label for="{{ form.password.id_for_label }}">Пароль</label></p>
+                                </div>
+                                <div class="field-value">
+                                    {{ form.password }}
+                                </div>
+                            </div>
+                            <div>
+                                <p>
+                                    <a href="{% url 'users:password_reset' %}">Я забыл пароль</a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="container d-flex justify-content-between">
+                        <a class="btn btn-primary" href="{% url 'users:registration' %}">Регистрация</a>
+                        <button type="submit" form="form-login" name="login_form" class="btn btn-primary">Войти</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
