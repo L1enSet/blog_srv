@@ -43,6 +43,7 @@ class ViewArticle(DataMixin, DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(request=self.request)
         context['article'] = self.get_object()
+        context['article_items'] = ArticleItem.objects.filter(article=self.get_object())
         context['comment_form'] = CommentForm()
         context['comment'] = Comment.objects.filter(is_deleted=False, article=self.get_object())
 

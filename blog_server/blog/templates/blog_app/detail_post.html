@@ -24,12 +24,18 @@
           <div class="container mb-3 ml-3 shorttext">
             <p>{{ article.intro }}</p>
           </div>
-
-          <div class="container mb-3 article-text">
-            <p class="w-100">
-              {{ article.text }}
-            </p>
-          </div>
+          {% for p in article_items%}
+              <div class="container mb-3 article-text">
+                {% if p.image %}
+                  <div class="d-flex justify-content-center">
+                    <img src="{{ p.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+                  </div>
+                {% endif %}
+                <p class="w-100">
+                  {{ p.text }}
+                </p>
+              </div>
+          {% endfor %}
 
           <div class="container">
             <span class="badge badge-dark mb-2">{{ article.date }}</span>

@@ -20,7 +20,7 @@ class Article(models.Model):
     title = models.CharField(max_length=256)
     slug = models.SlugField(null=False, unique=True)
     intro = models.TextField()
-    #text = models.TextField()
+    text = models.TextField(default=None, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField('Tag', default=None, blank=True, null=True, related_name='tags')
     image = models.ImageField(upload_to='post_images')
@@ -54,12 +54,21 @@ class Article(models.Model):
             self.tags.add(tag)
 
 
-class ArticleItems(models.Model):
-    aricle = ForeignKey(to=Article, on_delete=models.CASCADE)
-
-
 class ArticleItem(models.Model):
-    pass
+    article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='post_images', null=True, blank=True, default=None)
+    text = models.TextField(null=True, blank=True, default=None)
+
+
+#class ArticleItemImage(models.Model):
+    #article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
+    #image = models.ImageField(upload_to='post_images')
+
+
+#class ArtcleItemText(models.Model):
+    #article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
+    #text = models.TextField()
+
 
 
 class View(models.Model):
