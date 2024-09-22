@@ -1,6 +1,7 @@
 import json
 from django import forms
-from django.forms import modelformset_factory
+from django.forms import modelformset_factory, inlineformset_factory
+from django.forms.formsets import formset_factory
 from django.contrib import auth
 from .models import Article, Comment, Tag, ArticleItem
 
@@ -39,6 +40,8 @@ class CreateArticleItem(forms.ModelForm):
     class Meta:
         model = ArticleItem
         fields = ('image', 'text')
+
+ArticleItemFormSet = inlineformset_factory(Article, ArticleItem, form=CreateArticleItem, extra=1, min_num=5)
 
 
 class EditArticle(forms.ModelForm):

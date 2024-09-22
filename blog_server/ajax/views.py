@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from blog.models import Article, ArticleLike, Comment, CommentLike
-from blog.forms import CommentForm
+from blog.forms import CommentForm, CreateArticleItem
 from users.models import User
 
 
@@ -43,6 +43,29 @@ def add_like_comment(request, comment):
 @login_required
 def add_comment(request, article):
     form = CommentForm(data=json.loads(request.body))
+    article_obj = Article.objects.get(id=article)
+    status = None
+
+    if form.is_valid():
+        form.save(article_id=article, request=request)
+        status = 'succes'
+    else:
+        status = form.erros
+
+    return JsonResponse({"status": status})
+
+
+@login_required
+def add_block(request, article):
+    """
+    Method for additional new blocks with text or image in an article
+    
+    :param - request(JSON string), article primary key
+    :return - Json response status response message
+    add to DB new instanse content of article
+    """
+
+    form = CreateArticleItem(data=json.loads(request.body))
     article_obj = Article.objects.get(id=article)
     status = None
 

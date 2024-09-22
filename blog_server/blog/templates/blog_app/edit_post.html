@@ -5,7 +5,7 @@
 
 {% block content %}
     <!-- content block -->
-    <div class="container mt-3">
+    <div class="container mt-3 d-flex flex-row">
         <div class="card-body">
                 <h4 class="card-title">Edit Article</h4>
                 <form method="post" enctype="multipart/form-data">
@@ -40,7 +40,14 @@
                     </div>
                     <button type="submit" name="change_user_form" class="btn btn-primary">Save</button>
                 </form>
-            </div>
+        </div>
+        <div class="content-body">
+            <h4 class="content_body">Edit Content</h4>
+            {% for block in content_blocks %}
+                {{ block.image }}
+                {{ block.text }}
+            {% endfor %}
+        </div>
 
     </div>
 {% endblock %}

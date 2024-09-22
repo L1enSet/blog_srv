@@ -1,9 +1,13 @@
 from typing import Any
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.db.utils import IntegrityError
 from random import randint
-from .forms import CreateArticle, CommentForm
+from .forms import CreateArticle, CommentForm, CreateArticleItem, ArticleItemFormSet
+from users.forms import UserLogin
+from .models import Tag
+from django.shortcuts import render
+from .models import ArticleItem, Article
 from .utils import *
 
 
@@ -76,19 +80,28 @@ class ViewArticle(DataMixin, DetailView):
             view.save()
 
 
-class ViewCreateArticle(LoginRequiredMixin, CreateView, TextMixin, DataMixin):
+class ViewCreateArticle(LoginRequiredMixin, TemplateView, TextMixin, DataMixin):
     template_name = "blog_app/create_article.html"
     form_class = CreateArticle
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(request=self.request)
+        context['form'] = CreateArticle()
+        context['content_forms'] = ArticleItemFormSet()
         context2 = DataMixin.get_context_data(self, request=self.request)
         return context | context2
 
     def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            return self.form_valid(form)
+        print(request.POST)
+        #form = self.get_form()
+        context = self.get_context_data(**kwargs)
+        for i in context['content_forms']:
+            print(i)
+            if i.is_valid():
+                print("form is valid!")
+        if context['form'].is_valid():
+            self.form_valid(form = context['form'])
+        return HttpResponseRedirect("index")
 
     def form_valid(self, form):
         try:
@@ -99,6 +112,7 @@ class ViewCreateArticle(LoginRequiredMixin, CreateView, TextMixin, DataMixin):
 
         except IntegrityError:
             # когда слаг не уникален
+            article = form.save(commit=False)
             article.slug += f'{randint(0,1000)}'
             article.save()
             form.save_m2m()
@@ -106,11 +120,55 @@ class ViewCreateArticle(LoginRequiredMixin, CreateView, TextMixin, DataMixin):
         return HttpResponseRedirect(Article.objects.get(slug=article.slug).get_absolute_url())
 
 
+def ViewCreateArticleF(request):
+
+    context = {'form': CreateArticle(),
+               'content_forms': ArticleItemFormSet()}
+
+    context['form_login'] = UserLogin()
+    context['tag_list'] = Tag.objects.all()
+    if request.user.is_superuser:
+        context['no_published_articles'] = Article.objects.filter(is_published=False)
+
+    if request.method == 'POST':
+        if context['form'].is_valid():
+            try:
+                article = context['form'].save(commit=False)
+                article.slug = TextMixin.gen_slug(title=article.title)
+                article.save()
+                context['form'].save_m2m()
+
+                for i in context['content_forms']:
+                    print(i.data)
+                    if i.is_valid():
+                        print("form is valid!")
+
+            except IntegrityError:
+                # когда слаг не уникален
+                article = context['form'].save(commit=False)
+                article.slug += f'{randint(0, 1000)}'
+                article.save()
+                context['form'].save_m2m()
+
+            return HttpResponseRedirect(Article.objects.get(slug=article.slug).get_absolute_url())
+        else:
+            print(context['form'].data)
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        return render(request, "blog_app/create_article.html", context)
+
+
 class ViewEditArticle(LoginRequiredMixin, UpdateView):
     model = Article
     form_class = CreateArticle
     template_name = "blog_app/edit_post.html"
     slug_url_kwarg = 'article_slug'
+
+    """def get_context_data(self, **kwargs):
+        context = super().get_context_data(request=self.request)
+        context['content_blocks'] = ArticleItem.objects.filter(article=self.get_object())
+        context['form_block'] = CreateArticleItem()
+        return context"""
 
 
 
