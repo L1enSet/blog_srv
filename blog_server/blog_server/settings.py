@@ -37,16 +37,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'blog',
     'users',
     'api',
     'ajax',
     'rest_framework',
     'corsheaders',
-    'users.templatetags'
+    'users.templatetags',
+    'cacheops',
 ]
 
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware'
 ]
 
 ROOT_URLCONF = 'blog_server.urls'
@@ -79,16 +84,35 @@ WSGI_APPLICATION = 'blog_server.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'blog_db',
-        'USER': 'postgres',
+        'NAME': 'mydb',
+        'USER': 'admin',
         'PASSWORD': 'admin',
         'HOST': '127.0.0.1',
         'PORT': 5432,
     }
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "CACHE_MIDDLEWARE_ALIAS": "123",
+    }   
+}
+
+
+CACHEOPS_REDIS = "redis://127.0.0.1:6379/0"
+
+CACHEOPS = {
+    'blog.*': {'ops': 'all', 'timeout': 60*15},
+    'users.*': {'ops': 'all', 'timeout': 60*15}
 }
 
 
@@ -153,3 +177,12 @@ EMAIL_HOST_PASSWORD = 'j4vkfEU5RrrnpBwdMJ6H' #your password
 EMAIL_PORT = 2525
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+
+RESULTS_CACHE_SIZE = 25
+
+INTERNAL_IPS = ['127.0.0.1']
+
+
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/1"
+CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/1"
