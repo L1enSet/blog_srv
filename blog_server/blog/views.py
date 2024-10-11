@@ -14,7 +14,7 @@ class ListArticles(DataMixin, ListView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(request=self.request)
-        context['articles'] = self.model.objects.filter(is_published=True).order_by("-id").cache()
+        context['articles'] = self.model.objects.filter(is_published=True).order_by("-id")
         return context
 
     def dispatch(self, request, *args, **kwargs):

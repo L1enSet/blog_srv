@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'users.templatetags',
-    'cacheops',
+    #'cacheops',
 ]
 
 MIDDLEWARE = [
@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'blog_server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
+        'NAME': 'my_db',
         'USER': 'admin',
         'PASSWORD': 'admin',
         'HOST': '127.0.0.1',
@@ -100,20 +100,17 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/0",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
         "CACHE_MIDDLEWARE_ALIAS": "123",
     }   
 }
 
 
-CACHEOPS_REDIS = "redis://127.0.0.1:6379/0"
+#CACHEOPS_REDIS = "redis://127.0.0.1:6379/0"
 
-CACHEOPS = {
-    'blog.*': {'ops': 'all', 'timeout': 60*15},
-    'users.*': {'ops': 'all', 'timeout': 60*15}
-}
+#CACHEOPS = {
+#    'blog.*': {'ops': 'all', 'timeout': 60*15},
+#    'users.*': {'ops': 'all', 'timeout': 60*15}
+#}
 
 
 # Password validation
@@ -181,7 +178,7 @@ EMAIL_USE_SSL = False
 
 RESULTS_CACHE_SIZE = 25
 
-INTERNAL_IPS = ['127.0.0.1']
+#INTERNAL_IPS = ['127.0.0.1']
 
 
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/1"
