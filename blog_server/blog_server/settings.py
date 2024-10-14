@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 # Application definition
 
 INSTALLED_APPS = [
+    'cacheops',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'users.templatetags',
-    #'cacheops',
 ]
 
 MIDDLEWARE = [
@@ -105,12 +105,13 @@ CACHES = {
 }
 
 
-#CACHEOPS_REDIS = "redis://127.0.0.1:6379/0"
+CACHEOPS_REDIS = "redis://127.0.0.1:6379/0"
 
-#CACHEOPS = {
-#    'blog.*': {'ops': 'all', 'timeout': 60*15},
-#    'users.*': {'ops': 'all', 'timeout': 60*15}
-#}
+CACHEOPS = {
+    'blog.*': {'ops': 'all', 'timeout': 60*15},
+    'users.*': {'ops': 'all', 'timeout': 60*15},
+    'ajax.*': {'ops': 'all', 'timeout': 60*15}
+}
 
 
 # Password validation
@@ -178,7 +179,7 @@ EMAIL_USE_SSL = False
 
 RESULTS_CACHE_SIZE = 25
 
-#INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1']
 
 
 CELERY_BROKER_URL = "redis://127.0.0.1:6379/1"
