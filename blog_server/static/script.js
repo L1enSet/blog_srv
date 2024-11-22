@@ -137,3 +137,29 @@ async function updateComment(article, selector) {
 	return true;
 
 }
+
+
+/*update article*/
+async function sendAjaxUpdateTitle(element, event) {
+    console.log("ok")
+    event.preventDefault()
+    const article_slug = element.name;
+    const url = `http://127.0.0.1:8000/ajax/article_update/add_title/`+article_slug;
+    const csrftoken = getCookie('csrftoken'); // Получение CSRF-токена
+    let data = {
+                'title': element.title.value}
+    console.log(data)
+
+    let response = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json;charset=utf-8',
+                  'X-CSRFToken': csrftoken},
+        title: element.title.value,
+        body: JSON.stringify(data),
+        });
+
+    let result = await response.json();
+    event.target.reset(); // очищаем форму
+    //updateComment(article=element.className, selector="#comment-block")
+    return 0;
+}

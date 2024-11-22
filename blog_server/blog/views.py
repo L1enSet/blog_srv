@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.db.utils import IntegrityError
 from random import randint
-from .forms import CreateArticle, CommentForm, CreateArticleItem, ArticleItemFormSet
+from .forms import CreateArticle, CommentForm, CreateArticleItem, EditArticleTitle
 from users.forms import UserLogin
 from .models import Tag
 from django.shortcuts import render
@@ -86,24 +86,21 @@ class ViewCreateArticle(LoginRequiredMixin, TemplateView, TextMixin, DataMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(request=self.request)
-        context['form'] = CreateArticle()
-        context['content_forms'] = ArticleItemFormSet()
         context2 = DataMixin.get_context_data(self, request=self.request)
         return context | context2
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        new_article = Article.create_article
+
+    """def post(self, request, *args, **kwargs):
         print(request.POST)
-        #form = self.get_form()
+        form = self.get_form()
         context = self.get_context_data(**kwargs)
-        for i in context['content_forms']:
-            print(i)
-            if i.is_valid():
-                print("form is valid!")
         if context['form'].is_valid():
             self.form_valid(form = context['form'])
-        return HttpResponseRedirect("index")
+        return HttpResponseRedirect("index")"""
 
-    def form_valid(self, form):
+    """def form_valid(self, form):
         try:
             article = form.save(commit=False)
             article.slug = self.gen_slug(title=article.title)
@@ -117,13 +114,15 @@ class ViewCreateArticle(LoginRequiredMixin, TemplateView, TextMixin, DataMixin):
             article.save()
             form.save_m2m()
 
-        return HttpResponseRedirect(Article.objects.get(slug=article.slug).get_absolute_url())
+        return HttpResponseRedirect(Article.objects.get(slug=article.slug).get_absolute_url())"""
 
 
-def ViewCreateArticleF(request):
+"""def ViewCreateArticleF(request):
 
-    context = {'form': CreateArticle(),
-               'content_forms': ArticleItemFormSet()}
+    context = {
+        'form': CreateArticle(),
+        'content_forms': ArticleItemFormSet()
+        }
 
     context['form_login'] = UserLogin()
     context['tag_list'] = Tag.objects.all()
@@ -155,7 +154,7 @@ def ViewCreateArticleF(request):
             print(context['form'].data)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "blog_app/create_article.html", context)
+        return render(request, "blog_app/create_article.html", context)"""
 
 
 class ViewEditArticle(LoginRequiredMixin, UpdateView):
@@ -164,11 +163,11 @@ class ViewEditArticle(LoginRequiredMixin, UpdateView):
     template_name = "blog_app/edit_post.html"
     slug_url_kwarg = 'article_slug'
 
-    """def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(request=self.request)
         context['content_blocks'] = ArticleItem.objects.filter(article=self.get_object())
-        context['form_block'] = CreateArticleItem()
-        return context"""
+        context['form_title'] = EditArticleTitle()
+        return context
 
 
 

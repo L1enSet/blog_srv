@@ -1,6 +1,19 @@
+from string import ascii_letters
+from random import randint
+
 from django.db import models
 from django.urls import reverse
 from users.models import User
+#from .utils import gen_slug
+
+def gen_slug():
+    slug = ""
+    for i in range(0,20):
+        abc = ascii_letters
+        index = randint(0, len(abc)-1)
+        slug += ascii_letters[index]
+        
+    return slug
 
 class Tag(models.Model):
     name = models.CharField(max_length=32, primary_key=True)
@@ -17,13 +30,13 @@ class Tag(models.Model):
 
 
 class Article(models.Model):
-    title = models.CharField(max_length=256)
-    slug = models.SlugField(null=False, unique=True)
-    intro = models.TextField()
-    text = models.TextField(default=None, blank=True, null=True)
+    title = models.CharField(max_length=256, blank=True, default=None)
+    intro = models.TextField(blank=True, default=None)
+    #text = models.TextField(default=None, blank=True, null=True)
+    image = models.ImageField(upload_to='post_images', default=None, blank=True)
+    slug = models.SlugField(null=False, unique=True, default=gen_slug())
     date = models.DateTimeField(auto_now_add=True)
     tags = models.ManyToManyField('Tag', default=None, blank=True, null=True, related_name='tags')
-    image = models.ImageField(upload_to='post_images')
     comments_on = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
 
@@ -52,23 +65,16 @@ class Article(models.Model):
             tag = Tag.objects.get(name=i)
             print(tag.name)
             self.tags.add(tag)
+    
+    def create_article(self):
+        new = self.objects.create()
+        return self.get_absolute_url(new)
 
 
 class ArticleItem(models.Model):
     article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images', null=True, blank=True, default=None)
     text = models.TextField(null=True, blank=True, default=None)
-
-
-#class ArticleItemImage(models.Model):
-    #article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
-    #image = models.ImageField(upload_to='post_images')
-
-
-#class ArtcleItemText(models.Model):
-    #article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
-    #text = models.TextField()
-
 
 
 class View(models.Model):

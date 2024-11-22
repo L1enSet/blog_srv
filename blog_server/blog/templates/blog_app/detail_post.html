@@ -10,7 +10,9 @@
       <!-- top block -->
       <div class="card text-white article-content">
         <div class="d-flex justify-content-center">
-          <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+          {% if post.image %}
+            <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+          {% endif %}
         </div>
 
         {% if user.is_superuser %}

@@ -1,4 +1,5 @@
 from .models import *
+from random import randint
 from users.forms import UserLogin, UserRegistration
 from .models import Tag, ArticleLike, CommentLike, Comment
 from django.http import JsonResponse
@@ -7,6 +8,15 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 
+
+def gen_slug():
+    slug = ""
+    for i in range(0,20):
+        abc = ascii_letters
+        index = randint(0, len(abc))
+        slug += ascii_letters[index]
+        
+    return slug
 
 class DataMixin:
     
@@ -111,11 +121,15 @@ class TextMixin:
 
         result = ""
 
-        for i in tuple(rus):
-            try:
-                result += translit_table[i]
-            except KeyError:
-                result += i
+        if rus:
+            for i in tuple(rus):
+                try:
+                    result += translit_table[i]
+                except KeyError:
+                    result += i
+        else:
+            for i in range(20):
+                result += translit_table.keys()[randint(0, len(translit_table))]
 
         return result
 

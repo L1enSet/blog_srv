@@ -5,6 +5,14 @@ body {
 	font-family: 'Roboto', Arial, sans-serif;
 }
 
+/*Edit article styles*/
+
+.form-block {
+	background-color: aquamarine;
+	margin: 5px;
+	padding: 5px;
+}
+
 .article {
     background: rgb(43,31,62);
     background: linear-gradient(45deg, rgba(43,31,62,1) 27%, rgba(31,41,62,1) 45%, rgba(44,25,47,1) 73%, rgba(57,8,32,1) 96%);

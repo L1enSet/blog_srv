@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from blog.models import Article, ArticleLike, Comment, CommentLike
-from blog.forms import CommentForm, CreateArticleItem
+from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle
 from users.models import User
 
 
@@ -51,6 +51,23 @@ def add_comment(request, article):
         status = 'succes'
     else:
         status = form.erros
+
+    return JsonResponse({"status": status})
+
+
+@login_required
+def add_article_title(request, article):
+    form = EditArticleTitle()
+    article_obj = Article.objects.get(slug=article)
+    data = json.loads(request.body)
+    status = None
+
+    if form.is_valid(data=data):
+        article_obj.title = data['title']
+        article_obj.save()
+        status = 'succes'
+    else:
+        status = 'erros'
 
     return JsonResponse({"status": status})
 

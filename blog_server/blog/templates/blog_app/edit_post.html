@@ -5,48 +5,37 @@
 
 {% block content %}
     <!-- content block -->
-    <div class="container mt-3 d-flex flex-row">
-        <div class="card-body">
-                <h4 class="card-title">Edit Article</h4>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="form-group mb-2">
-                        <label for="{{ form.image.id_for_label }}">Image</label>
-                        {{ form.image }}
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="{{ form.title.id_for_label }}">Title</label>
-                        {{ form.title }}
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="{{ form.intro.id_for_label }}">Intro</label>
-                        {{ form.intro }}
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="{{ form.text.id_for_label }}">Text</label>
-                        {{ form.text }}
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="{{ form.tags.id_for_label }}">Tags</label>
-                        {{ form.tags }}
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="{{ form.comments_on.id_for_label }}">Comments</label>
-                        {{ form.comments_on }}
-                    </div>
-                    <div class="form-group mb-2">
-                        <label for="{{ form.is_published.id_for_label }}">Published</label>
-                        {{ form.is_published }}
-                    </div>
-                    <button type="submit" name="change_user_form" class="btn btn-primary">Save</button>
-                </form>
+    <div class="container mt-3 d-flex flex-column">
+        <div class="container form-block">
+            <h4>title</h4>
+            <div>
+                <div class="current">
+                    {{ article.title }}
+                </div>
+                <div class="btn-block">
+                    <a type="button" class="btn btn-success my-2 my-sm-0">change</a>
+                </div>
+                <div class="form-element">
+                    <form id="title_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateTitle(this, event)" enctype="multipart/form-data" novalidate="true"></form>
+                        {% csrf_token %}
+                        <label for="{{ form_title.title.id_for_label }}"></label>
+                        {{ form_title.title }}
+                        <button type="submit" class="btn btn-success my-2 my-sm-0">Send</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="content-body">
-            <h4 class="content_body">Edit Content</h4>
-            {% for block in content_blocks %}
-                {{ block.image }}
-                {{ block.text }}
-            {% endfor %}
+        <div class="container form-block">
+            <h4>image</h4>
+        </div>
+        <div class="container form-block">
+            <h4>content items</h4>
+        </div>
+        <div class="container form-block">
+            <h4>tags</h4>
+        </div>
+        <div class="container form-block">
+            <h4>settings</h4>
         </div>
 
     </div>

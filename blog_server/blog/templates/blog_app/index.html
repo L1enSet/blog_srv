@@ -21,7 +21,9 @@
             <div class="container bg-dark d-flex flex-column article">
               <div class="row">
                 <div class="col">
-                  <img src="{{ post.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="300" width="500">
+                  {% if post.image %}
+                    <img src="{{ post.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="300" width="500">
+                  {% endif %}
                 </div>
                 <div class="col-sm">
                   <h4 class="card-title mt-2">{{ post.title }}</h4>

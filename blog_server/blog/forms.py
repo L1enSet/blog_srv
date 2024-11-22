@@ -9,18 +9,39 @@ from .models import Article, Comment, Tag, ArticleItem
 class CreateArticle(forms.ModelForm):
 
     title = forms.CharField(
-        widget=forms.TextInput(attrs={'class': "form-control py-4", 'placeholder': 'Enter a title'}))
+        widget=forms.TextInput(attrs={
+            'class': "form-control py-4",
+            'placeholder': 'Enter a title'
+            }))
+    
     intro = forms.CharField(
-        widget=forms.Textarea(attrs={'class': "form-control mb-2", 'type': 'text'}))
+        widget=forms.Textarea(attrs={
+            'class': "form-control mb-2",
+            'type': 'text'
+            }))
+    
     text = forms.CharField(
-        widget=forms.Textarea(attrs={'class': "form-control mb-2", 'type': 'text', 'required': 'true'}))
+        widget=forms.Textarea(attrs={
+            'class': "form-control mb-2",
+            'type': 'text',
+            'required': 'true'
+            }))
+    
     image = forms.ImageField(
-        widget=forms.FileInput(attrs={'class': 'custom-file-input'}))
+        widget=forms.FileInput(attrs={
+            'class': 'custom-file-input'
+            }))
+    
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
         required=False,
         to_field_name='name',
-        widget=forms.SelectMultiple(attrs={'class': "form-select", 'multiple': 'true', 'aria-label': 'select tags'}))
+        widget=forms.SelectMultiple(attrs={
+            'class': "form-select",
+            'multiple': 'true',
+            'aria-label': 'select tags'
+            }))
+    
     сomments_on = forms.CheckboxInput()
 
     is_published = forms.CheckboxInput()
@@ -28,6 +49,24 @@ class CreateArticle(forms.ModelForm):
     class Meta:
         model = Article
         fields = ('title', 'intro', 'text', 'image', 'tags', 'comments_on', 'is_published')
+
+
+class EditArticleTitle(forms.Form):
+    title = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': "form-control py-4",
+            'placeholder': 'Enter a title'
+            }))
+
+    class Meta:
+        fields = ('title',)
+    
+    def is_valid(self, data):
+        if data['title']:
+            return True
+        else:
+            return False
+
 
 
 class CreateArticleItem(forms.ModelForm):
