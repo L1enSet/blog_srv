@@ -165,6 +165,7 @@ class ViewEditArticle(LoginRequiredMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(request=self.request)
+        context['article'] = self.get_object()
         context['content_blocks'] = ArticleItem.objects.filter(article=self.get_object())
         context['form_title'] = EditArticleTitle()
         return context

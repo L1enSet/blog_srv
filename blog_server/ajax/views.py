@@ -73,6 +73,22 @@ def add_article_title(request, article):
 
 
 @login_required
+def add_article_image(request, article):
+    article_obj = Article.objects.get(slug=article)
+    data = json.loads(request.body)
+    status = None
+
+    if form.is_valid(data=data):
+        article_obj.image = data['image']
+        article_obj.save()
+        status = 'succes'
+    else:
+        status = 'erros'
+
+    return JsonResponse({"status": status})
+
+
+@login_required
 def add_block(request, article):
     """
     Method for additional new blocks with text or image in an article

@@ -10,13 +10,13 @@
             <h4>title</h4>
             <div>
                 <div class="current">
-                    {{ article.title }}
+                    <h3>{{ article.title }}</h3>
                 </div>
                 <div class="btn-block">
                     <a type="button" class="btn btn-success my-2 my-sm-0">change</a>
                 </div>
                 <div class="form-element">
-                    <form id="title_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateTitle(this, event)" enctype="multipart/form-data" novalidate="true"></form>
+                    <form id="title_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateTitle(this, event)" enctype="multipart/form-data" novalidate="true">
                         {% csrf_token %}
                         <label for="{{ form_title.title.id_for_label }}"></label>
                         {{ form_title.title }}
@@ -27,6 +27,19 @@
         </div>
         <div class="container form-block">
             <h4>image</h4>
+            <div class="current">
+                <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+            </div>
+            <div class="btn-block">
+                <a type="button" class="btn btn-success my-2 my-sm-0">change</a>
+            </div>
+            <div class="form-element">
+                <form id="image_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateImage(this, event)" enctype="multipart/form-data">
+                    <label for="formFile" class="form-label">Default file input example</label>
+                    <input class="form-control" type="file" id="formFile">
+                    <button type="submit" class="btn btn-success my-2 my-sm-0">Send</button>
+                </form>
+            </div>
         </div>
         <div class="container form-block">
             <h4>content items</h4>

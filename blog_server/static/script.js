@@ -140,6 +140,18 @@ async function updateComment(article, selector) {
 
 
 /*update article*/
+
+async function fileRead(file) {
+    
+    let result;
+    const reader = new FileReader();
+    reader.onload = (file) => {
+        console.log("file")
+        console.log(file.target.result);
+        result = file.target.result;
+    }
+}
+
 async function sendAjaxUpdateTitle(element, event) {
     console.log("ok")
     event.preventDefault()
@@ -161,5 +173,29 @@ async function sendAjaxUpdateTitle(element, event) {
     let result = await response.json();
     event.target.reset(); // очищаем форму
     //updateComment(article=element.className, selector="#comment-block")
+    return 0;
+}
+
+
+async function sendAjaxUpdateImage(element, event) {
+    event.preventDefault();
+    const article_slug = element.name;
+    const fileInput = document.getElementById("formFile");
+    const file = fileInput.files[0];
+    const url = `http://127.0.0.1:8000/ajax/article_update/add_image/`+article_slug;
+    const csrftoken = getCookie('csrftoken'); // Получение CSRF-токена
+    const formData = new FormData();
+    formData.append('image', file);
+
+    let response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'X-CSRFToken': csrftoken
+        },
+        body: formData
+    })
+
+    console.log(response);
     return 0;
 }
