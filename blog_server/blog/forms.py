@@ -66,6 +66,22 @@ class EditArticleTitle(forms.Form):
             return True
         else:
             return False
+        
+
+class EditArticleImage(forms.Form):
+    image = forms.ImageField(
+        widget=forms.FileInput(attrs={
+            'class': 'custom-file-input'
+            }))
+
+    class Meta:
+        fields = ('image',)
+    
+    def is_valid(self, data):
+        if data['image']:
+            return True
+        else:
+            return False
 
 
 

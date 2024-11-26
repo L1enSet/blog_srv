@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.db.utils import IntegrityError
 from random import randint
-from .forms import CreateArticle, CommentForm, CreateArticleItem, EditArticleTitle
+from .forms import CreateArticle, CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage
 from users.forms import UserLogin
 from .models import Tag
 from django.shortcuts import render
@@ -168,6 +168,7 @@ class ViewEditArticle(LoginRequiredMixin, UpdateView):
         context['article'] = self.get_object()
         context['content_blocks'] = ArticleItem.objects.filter(article=self.get_object())
         context['form_title'] = EditArticleTitle()
+        context['form_image'] = EditArticleImage()
         return context
 
 

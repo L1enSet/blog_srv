@@ -180,20 +180,20 @@ async function sendAjaxUpdateTitle(element, event) {
 async function sendAjaxUpdateImage(element, event) {
     event.preventDefault();
     const article_slug = element.name;
-    const fileInput = document.getElementById("formFile");
-    const file = fileInput.files[0];
+    const file = element.image.files[0];
+    console.log(file.name)
     const url = `http://127.0.0.1:8000/ajax/article_update/add_image/`+article_slug;
     const csrftoken = getCookie('csrftoken'); // Получение CSRF-токена
-    const formData = new FormData();
-    formData.append('image', file);
+    const data = {
+        'image': file,
+    }
 
     let response = await fetch(url, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json;charset=utf-8',
             'X-CSRFToken': csrftoken
         },
-        body: formData
+        body: JSON.stringify(data),
     })
 
     console.log(response);

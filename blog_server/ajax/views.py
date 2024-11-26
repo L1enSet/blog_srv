@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from blog.models import Article, ArticleLike, Comment, CommentLike
-from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle
+from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage
 from users.models import User
 
 
@@ -74,11 +74,15 @@ def add_article_title(request, article):
 
 @login_required
 def add_article_image(request, article):
+    form = EditArticleImage()
     article_obj = Article.objects.get(slug=article)
     data = json.loads(request.body)
     status = None
+    print("image is")
+    print(data['image'])
 
     if form.is_valid(data=data):
+        
         article_obj.image = data['image']
         article_obj.save()
         status = 'succes'
