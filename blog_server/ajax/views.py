@@ -74,20 +74,10 @@ def add_article_title(request, article):
 
 @login_required
 def add_article_image(request, article):
-    form = EditArticleImage()
     article_obj = Article.objects.get(slug=article)
-    data = json.loads(request.body)
     status = None
-    print("image is")
-    print(data['image'])
+    print(request.POST)
 
-    if form.is_valid(data=data):
-        
-        article_obj.image = data['image']
-        article_obj.save()
-        status = 'succes'
-    else:
-        status = 'erros'
 
     return JsonResponse({"status": status})
 
