@@ -28,13 +28,15 @@
         <div class="container form-block">
             <h4>image</h4>
             <div class="current">
-                <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+                {% if article.image %}
+                    <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+                {% endif %}
             </div>
             <div class="btn-block">
                 <a type="button" class="btn btn-success my-2 my-sm-0">change</a>
             </div>
             <div class="form-element">
-                <form id="image_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateImage(this, event)" enctype="multipart/form-data">
+                <form id="image_form" action="{% url 'ajax:add_article_image' article.slug %}" method="post" name="{{ article.slug }}" onsubmit="sendAjaxUpdateImage(this, event)" enctype="multipart/form-data">
                     {% csrf_token %}
                     <label for="{{ form_image.image.id_for_label }}" class="form-label">Default file input example</label>
                     {{ form_image.image }}

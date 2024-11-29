@@ -77,8 +77,8 @@ class EditArticleImage(forms.Form):
     class Meta:
         fields = ('image',)
     
-    def is_valid(self, data):
-        if data['image']:
+    def is_valid(self, file):
+        if file:
             return True
         else:
             return False

@@ -2,6 +2,7 @@ import json
 from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 from blog.models import Article, ArticleLike, Comment, CommentLike
 from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage
 from users.models import User
@@ -76,18 +77,21 @@ def add_article_title(request, article):
 def add_article_image(request, article):
     form = EditArticleImage()
     article_obj = Article.objects.get(slug=article)
-    data = json.loads(request.body)
-    status = None
-    print("image is")
-    print(data['image'])
-
-    if form.is_valid(data=data):
+    file = request.FILES.get("file")
+    
+    if form.is_valid(file=file):
+        #create fss object
+        fss = FileSystemStorage()
+        fss.path("/post_images/")
+        filename = fss.save(name = file.name, content=file)
+        url = fss.url(filename)
         
-        article_obj.image = data['image']
+        #change article object
+        article_obj.image = filename
         article_obj.save()
         status = 'succes'
     else:
-        status = 'erros'
+        status = 'error'
 
     return JsonResponse({"status": status})
 
