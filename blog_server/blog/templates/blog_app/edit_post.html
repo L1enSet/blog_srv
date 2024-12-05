@@ -10,7 +10,7 @@
             <h4>title</h4>
             <div>
                 <div class="current">
-                    <h3>{{ article.title }}</h3>
+                    <h3 id="title{{article.slug}}">{{ article.title }}</h3>
                 </div>
                 <div class="btn-block">
                     <a type="button" class="btn btn-success my-2 my-sm-0">change</a>
@@ -29,7 +29,7 @@
             <h4>image</h4>
             <div class="current">
                 {% if article.image %}
-                    <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+                    <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" id="image{{ article.slug }}" alt="Responsive image" height="600" width="98%">
                 {% endif %}
             </div>
             <div class="btn-block">
@@ -46,6 +46,53 @@
         </div>
         <div class="container form-block">
             <h4>content items</h4>
+            {% for item in content_blocks %}
+                <div class="container item-block">
+                    {% if item.image %}
+                        <div class="image-block">
+                            <img src="{{ item.image.url }}" class="img-fluid mt-2 ml-2" id="item-image-{{ item.id }}" alt="Responsive image" height="600" width="98%">
+                        </div>
+                    {% endif %}
+                    {% if item.text %}
+                        <div class="text-block">
+                            <p id="item-text-{{ item.id }}">{{ item.text }}</p>
+                        </div>
+                    {% endif %}
+                    <div class="control-panel">
+                        <button type="button" class="btn btn-success my-2 my-sm-0">Change</button>
+                        <button type="button" class="btn btn-warning my-2 my-sm-0">Delete</button>
+                    </div>
+                    <div class="item-edit-form form-element">
+                        <form id="{{ item.id }}" name="{{ article.slug }}" onsubmit="editArtcleItem(this, event)">
+                            {% csrf_token%}
+                            <div class="mb-3">
+                                <label for="itemImageForm{{ item.id }}" class="form-label">Item image</label>
+                                <input class="form-control" type="file" name="image" id="itemImageForm{{ item.id }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="itemTextForm{{ item.id }}" class="form-label">Item text</label>
+                                <textarea class="form-control" name="text" id="itemTextForm{{ item.id }}" rows="3"></textarea>
+                            </div>
+                            <button type="submit">Изменить</button>
+                        </form>
+                          
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="container form-block">
+            <form id="{{ item.id }}" name="{{ article.slug }}" onsubmit="editArtcleItem(this, event)">
+                {% csrf_token%}
+                <div class="mb-3">
+                    <label for="itemImageForm{{ item.id }}" class="form-label">Item image</label>
+                    <input class="form-control" type="file" name="image" id="itemImageForm{{ item.id }}">
+                </div>
+                <div class="mb-3">
+                    <label for="itemTextForm{{ item.id }}" class="form-label">Item text</label>
+                    <textarea class="form-control" name="text" id="itemTextForm{{ item.id }}" rows="3"></textarea>
+                </div>
+                <button type="submit">Изменить</button>
+            </form>
         </div>
         <div class="container form-block">
             <h4>tags</h4>
@@ -56,4 +103,7 @@
 
     </div>
 {% endblock %}
+{% block page_script %}
+    <script src="{% static 'edit_post_page.js' %}"></script>
+{% endblock%}
 

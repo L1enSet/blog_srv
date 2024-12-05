@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
-from blog.models import Article, ArticleLike, Comment, CommentLike
+from blog.models import Article, ArticleLike, Comment, CommentLike, ArticleItem
 from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage
 from users.models import User
 
@@ -62,15 +62,24 @@ def add_article_title(request, article):
     article_obj = Article.objects.get(slug=article)
     data = json.loads(request.body)
     status = None
+    err = None
 
-    if form.is_valid(data=data):
-        article_obj.title = data['title']
-        article_obj.save()
-        status = 'succes'
-    else:
-        status = 'erros'
+    try:
+        if form.is_valid(data=data):
+            article_obj.title = data['title']
+            article_obj.save()
+            status = 'succes'
+        else:
+            status = 'erros'
+    except Exception as exc:
+        status = '500'
+        err = exc
 
-    return JsonResponse({"status": status})
+    return JsonResponse({
+        "status": status,
+        "object": article_obj.title,
+        "err": err,
+        })
 
 
 @login_required
@@ -82,7 +91,7 @@ def add_article_image(request, article):
     if form.is_valid(file=file):
         #create fss object
         fss = FileSystemStorage()
-        fss.path("/post_images/")
+        fss.path("post_images")
         filename = fss.save(name = file.name, content=file)
         url = fss.url(filename)
         
@@ -93,7 +102,10 @@ def add_article_image(request, article):
     else:
         status = 'error'
 
-    return JsonResponse({"status": status})
+    return JsonResponse({
+        "status": status,
+        "img": article_obj.image.url,
+        })
 
 
 @login_required
@@ -107,8 +119,9 @@ def add_block(request, article):
     """
 
     form = CreateArticleItem(data=json.loads(request.body))
-    article_obj = Article.objects.get(id=article)
+    article_obj = Article.objects.get(slug=article)
     status = None
+    
 
     if form.is_valid():
         form.save(article_id=article, request=request)
@@ -117,6 +130,53 @@ def add_block(request, article):
         status = form.erros
 
     return JsonResponse({"status": status})
+
+
+@login_required
+def edit_block(request, article):
+    """
+    Method for edit content blocks with text or image in an article
+    
+    :param - request(JSON string), article primary key
+    :return - Json response status response message
+    add to DB new instanse content of article
+    """
+
+    article_obj = Article.objects.get(slug=article)
+    item_obj = ArticleItem.objects.get(id=request.POST['item'])
+    text = request.POST['text']
+    image = request.FILES.get("file")
+    status = None
+    error = None
+    print(request.POST)
+    
+    #valid file
+    try:
+        fss = FileSystemStorage()
+        fss.path("post_images")
+        filename = fss.save(name = image.name, content=image)
+        url = fss.url(filename)
+    except AttributeError:
+        filename = None
+
+    #valid form
+    try:
+        if text != None and text != "":
+            item_obj.text = text
+        if filename != None:
+            item_obj.image = filename
+        item_obj.save()
+        status = 'success'
+    except Exception as exc:
+        status = 'error'
+        error = exc
+
+    return JsonResponse({
+        "status": status,
+        "error": error,
+        "img": item_obj.image.url,
+        "text": item_obj.text,
+        })
 
 
 @login_required

@@ -251,9 +251,13 @@
       </div>
     </div>
   </div>
-  <script src="{% static 'bootstrap/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'script.js' %}"></script>
+
 </body>
+<script src="{% static 'bootstrap/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'script.js' %}"></script>
+{% block page_script %}
+{% endblock %}
+
 </html>
 
 
