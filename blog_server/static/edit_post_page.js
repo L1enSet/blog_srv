@@ -130,3 +130,8 @@ async function editArtcleItem(element, event) {
     });
     event.target.reset()
 }
+
+
+async function addArticleItem(element, event) {
+    //tut
+}
