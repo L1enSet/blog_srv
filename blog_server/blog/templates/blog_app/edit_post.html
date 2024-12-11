@@ -44,7 +44,7 @@
                 </form>
             </div>
         </div>
-        <div class="container form-block">
+        <div class="container" id="content-items-block">
             <h4>content items</h4>
             {% for item in content_blocks %}
                 <div class="container item-block">
@@ -59,7 +59,7 @@
                         </div>
                     {% endif %}
                     <div class="control-panel">
-                        <button type="button" class="btn btn-success my-2 my-sm-0">Change</button>
+                        <button type="button" class="btn btn-success my-2 my-sm-0" name="{{ item.id }}" onclick="showForm(this)">Change</button>
                         <button type="button" class="btn btn-warning my-2 my-sm-0">Delete</button>
                     </div>
                     <div class="item-edit-form form-element">
@@ -81,7 +81,7 @@
             {% endfor %}
         </div>
         <div class="container form-block">
-            <form id="{{ article.id }}" name="{{ article.slug }}" onsubmit="addArtcleItem(this, event)">
+            <form id="{{ article.id }}" name="{{ article.slug }}" onsubmit="addArticleItem(this, event)">
                 {% csrf_token%}
                 <div class="mb-3">
                     <label for="addItemImageForm{{ article.slug }}" class="form-label">Item image</label>

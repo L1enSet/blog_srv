@@ -117,19 +117,50 @@ def add_block(request, article):
     :return - Json response status response message
     add to DB new instanse content of article
     """
-
-    form = CreateArticleItem(data=json.loads(request.body))
     article_obj = Article.objects.get(slug=article)
+    item_obj = ArticleItem()
+    text = request.POST['text']
+    image = request.FILES.get("file")
     status = None
+    error = None
+    print(request.POST)
     
+    #valid file
+    try:
+        fss = FileSystemStorage()
+        fss.path("post_images")
+        filename = fss.save(name = image.name, content=image)
+        url = fss.url(filename)
+    except AttributeError:
+        filename = None
 
-    if form.is_valid():
-        form.save(article_id=article, request=request)
-        status = 'succes'
-    else:
-        status = form.erros
+    #valid form
+    try:
+        item_obj.article = article_obj
 
-    return JsonResponse({"status": status})
+        if text != None and text != "":
+            item_obj.text = text
+        if filename != None:
+            item_obj.image = filename
+        item_obj.save()
+        status = 'success'
+    except Exception as exc:
+        status = 'error'
+        error = exc
+    
+    #create response
+    response = {
+        "status": status,
+        "error": error,
+        "id": item_obj.id,
+        }
+    
+    if item_obj.image.url:
+        response['img'] = item_obj.image.url
+    if item_obj.text:
+        response['text'] = item_obj.text
+
+    return JsonResponse(response)
 
 
 @login_required

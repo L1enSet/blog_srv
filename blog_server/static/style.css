@@ -6,11 +6,23 @@ body {
 }
 
 /*Edit article styles*/
+#content-items-block {
+	background-color: aquamarine;
+	margin: 5px;
+	padding: 5px;
+}
 
 .form-block {
 	background-color: aquamarine;
 	margin: 5px;
 	padding: 5px;
+}
+
+.item-edit-form {
+	background-color: aquamarine;
+	margin: 5px;
+	padding: 5px;
+	display: none;
 }
 
 .article {

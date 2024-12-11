@@ -4,7 +4,7 @@ from .views import add_like, add_comment, add_like_comment, delete_comment, add_
 app_name = 'ajax'
 
 urlpatterns = [
-    path('art_content_block/<int:article>', add_block, name='content_block'),
+    path('add_content_block/<str:article>', add_block, name='add_content_block'),
     path('article_update/item_article_edit/<str:article>', edit_block, name='edit_block'), 
     path('art_likes/<int:article>', add_like, name='likes'),
     path('art_comment/<int:article>', add_comment, name='comment'),
