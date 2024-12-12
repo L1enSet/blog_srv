@@ -211,6 +211,22 @@ def edit_block(request, article):
 
 
 @login_required
+def delete_article_item(request, item):
+    data = {}
+    try:
+        obj_item = ArticleItem.objects.filter(id=item)
+        obj_item.delete()
+        data['status'] = 'success'
+    except Exception as exc:
+        data['status'] = 'error'
+        data['error'] = exc
+    
+    return JsonResponse(data)
+        
+
+
+
+@login_required
 def delete_comment(request, comment):
     status = "not deleted"
     if request.method == "POST":

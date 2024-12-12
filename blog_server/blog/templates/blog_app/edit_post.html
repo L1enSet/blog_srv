@@ -60,7 +60,7 @@
                     {% endif %}
                     <div class="control-panel">
                         <button type="button" class="btn btn-success my-2 my-sm-0" name="{{ item.id }}" onclick="showForm(this)">Change</button>
-                        <button type="button" class="btn btn-warning my-2 my-sm-0">Delete</button>
+                        <a type="button" name={{ item.id }} class="btn btn-warning my-2 my-sm-0" onclick="deleteArticleItem(this)">Delete</a>
                     </div>
                     <div class="item-edit-form form-element">
                         <form id="{{ item.id }}" name="{{ article.slug }}" onsubmit="editArtcleItem(this, event)">

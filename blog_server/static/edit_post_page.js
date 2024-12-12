@@ -17,61 +17,66 @@ function showForm(element) {
 }
 
 
-function upgradeItems(srvResponse) {
+function upgradeItems(srvResponse, method, itemId=undefined) {
     const containerId = "content-items-block"
     let html = ""
 
-    //create html element
-    if(srvResponse.img) {
-        let imageDiv = `
-        <div class="image-block">
-            <img src="${srvResponse.img}" class="img-fluid mt-2 ml-2" id="item-image-${srvResponse.id}" alt="Responsive image" height="600" width="98%">
+    if (method=="add") {
+        //create html element
+        if(srvResponse.img) {
+            let imageDiv = `
+            <div class="image-block">
+                <img src="${srvResponse.img}" class="img-fluid mt-2 ml-2" id="item-image-${srvResponse.id}" alt="Responsive image" height="600" width="98%">
+            </div>
+            `
+
+            html += imageDiv
+        }
+
+        if(srvResponse.text){
+            let textDiv = `
+            <div class="text-block">
+                <p id="item-text-${srvResponse.id}">${srvResponse.text}</p>
+            </div>
+            `
+
+            html += textDiv
+        }
+
+        let controlPanelDiv = `
+        <div class="control-panel">
+            <button type="button" class="btn btn-success my-2 my-sm-0">Change</button>
+            <button type="button" class="btn btn-warning my-2 my-sm-0">Delete</button>
         </div>
         `
+        html += controlPanelDiv
 
-        html += imageDiv
-    }
-
-    if(srvResponse.text){
-        let textDiv = `
-        <div class="text-block">
-            <p id="item-text-${srvResponse.id}">${srvResponse.text}</p>
+        let formDiv =  `
+        <div class="item-edit-form form-element">
+            <form id="${srvResponse.id}" name="${srvResponse.slug}" onsubmit="editArtcleItem(this, event)">
+                <div class="mb-3">
+                <label for="itemImageForm${srvResponse.id}" class="form-label">Item image</label>
+                    <input class="form-control" type="file" name="image" id="itemImageForm${srvResponse.id}">
+                </div>
+                <div class="mb-3">
+                    <label for="itemTextForm${srvResponse.id}" class="form-label">Item text</label>
+                    <textarea class="form-control" name="text" id="itemTextForm${srvResponse.id}" rows="3"></textarea>
+                </div>
+                <button type="submit">Изменить</button>
+            </form>
+                            
         </div>
         `
+        html += formDiv
 
-        html += textDiv
+        //add html to page
+        let contentBlock = document.getElementById(containerId)
+        contentBlock.innerHTML += html
+        
+    } else if (method=="delete") {
+        let item = document.getElementById(`item`+itemId)
+        item.innerHTML = html
     }
-
-    let controlPanelDiv = `
-    <div class="control-panel">
-        <button type="button" class="btn btn-success my-2 my-sm-0">Change</button>
-        <button type="button" class="btn btn-warning my-2 my-sm-0">Delete</button>
-    </div>
-    `
-    html += controlPanelDiv
-
-    let formDiv =  `
-    <div class="item-edit-form form-element">
-        <form id="${srvResponse.id}" name="${srvResponse.slug}" onsubmit="editArtcleItem(this, event)">
-            <div class="mb-3">
-            <label for="itemImageForm${srvResponse.id}" class="form-label">Item image</label>
-                <input class="form-control" type="file" name="image" id="itemImageForm${srvResponse.id}">
-            </div>
-            <div class="mb-3">
-                <label for="itemTextForm${srvResponse.id}" class="form-label">Item text</label>
-                <textarea class="form-control" name="text" id="itemTextForm${srvResponse.id}" rows="3"></textarea>
-            </div>
-            <button type="submit">Изменить</button>
-        </form>
-                          
-    </div>
-    `
-    html += formDiv
-
-    //add html to page
-    let contentBlock = document.getElementById(containerId)
-    contentBlock.innerHTML += html
-    
 }
 
 
@@ -214,7 +219,7 @@ async function addArticleItem(element, event) {
     data.append("csrfmiddlewaretoken", csrftoken);
     console.log(data); 
 
-    // create and send response
+    // create and send request
     let response = await $.ajax({
         url: `http://127.0.0.1:8000/ajax/add_content_block/`+article_slug,
         method: "POST",
@@ -228,9 +233,26 @@ async function addArticleItem(element, event) {
             // update block
             //console.dir(data);
             if (data.status) {
-                upgradeItems(data)
+                upgradeItems(data, method="add")
             }
         },  
     });
     event.target.reset()
+}
+
+
+async function deleteArticleItem(element) {
+    console.log("delete item")
+    const itemId = element.name;
+
+    //create and send request
+    let responce = await $.ajax({
+        url: `http://127.0.0.1:8000/ajax/article_update/delete_content_block/`+itemId,
+        method: "DELETE",
+        success: function(data){
+            if (data.status) {
+                upgradeItems(data, method="delete", itemId=itemId)
+            }
+        }
+    })
 }
