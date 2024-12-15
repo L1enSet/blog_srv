@@ -47,7 +47,7 @@
         <div class="container" id="content-items-block">
             <h4>content items</h4>
             {% for item in content_blocks %}
-                <div class="container item-block">
+                <div class="container item-block" id="item-block-{{ item.id }}">
                     {% if item.image %}
                         <div class="image-block">
                             <img src="{{ item.image.url }}" class="img-fluid mt-2 ml-2" id="item-image-{{ item.id }}" alt="Responsive image" height="600" width="98%">
@@ -59,7 +59,7 @@
                         </div>
                     {% endif %}
                     <div class="control-panel">
-                        <button type="button" class="btn btn-success my-2 my-sm-0" name="{{ item.id }}" onclick="showForm(this)">Change</button>
+                        <a type="button" class="btn btn-success my-2 my-sm-0" name="{{ item.id }}" onclick="showForm(this)">Change</a>
                         <a type="button" name={{ item.id }} class="btn btn-warning my-2 my-sm-0" onclick="deleteArticleItem(this)">Delete</a>
                     </div>
                     <div class="item-edit-form form-element">
@@ -78,6 +78,7 @@
                           
                     </div>
                 </div>
+
             {% endfor %}
         </div>
         <div class="container form-block">
@@ -96,6 +97,34 @@
         </div>
         <div class="container form-block">
             <h4>tags</h4>
+            <div class="container d-flex flex-row flex-wrap justify-content-start" id="tag-list-container">
+                {% with article.tags.all as tags %}
+                  {% if tags %}
+                    {% for tag in tags %}
+                      <a type="button" href="#!" name="{{ tag.name }}" id="tag-item-{{ tag.name }}" class="btn btn-outline-success article-tag">
+                        <b>#{{ tag.name }}</b>
+                      </a>
+                      <a type="button" class="btn btn-success my-2 my-sm-0" data-tagName={{ tag.name }} onclick="deleteTag(this)">X</a>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+            </div>
+            <div>
+                <a type="button" class="btn btn-success my-2 my-sm-0">Change</a>
+            </div>
+            <div>
+                <a class="btn btn-outline-success dropdown-toggle" href="#" role="button" id="dropdownSelectTag" data-bs-toggle="dropdown" aria-expanded="false">
+                    Add tag
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownSelectTag">
+                    {% for tag in tag_list %}
+                      <li>
+                        <a class="dropdown-item" name="{{ tag.name }}" data-tagName={{ tag.name }} onclick="addTag(this)" type="button">{{ tag.name }}</a>
+                      </li>
+                    {% endfor %}
+                </ul>
+                <a type="button" data-article="{{ article.slug }}" class="btn btn-success my-2 my-sm-0" onclick="editArticleTags(this)">Send</a>
+            </div>
         </div>
         <div class="container form-block">
             <h4>settings</h4>

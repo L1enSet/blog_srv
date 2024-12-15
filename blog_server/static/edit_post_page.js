@@ -1,3 +1,17 @@
+//page varriables
+var tagArticleList = new Array();
+function readTags() {
+    let html = document.getElementsByClassName("article-tag");
+    for (i=0; i<html.length; i++) {
+        tagArticleList.push(html[i].name)
+    }
+}
+readTags()
+console.log(tagArticleList)
+
+
+
+
 function select_tag(element) {
 	let tag_form = document.getElementById("formGroupExampleInput");
 	if (tag_form.value == "") {
@@ -17,9 +31,9 @@ function showForm(element) {
 }
 
 
-function upgradeItems(srvResponse, method, itemId=undefined) {
+function upgradeItems(srvResponse, method, itemId) {
     const containerId = "content-items-block"
-    let html = ""
+    let html = `<div class="container item-block" id="item-block-${srvResponse.id}">`
 
     if (method=="add") {
         //create html element
@@ -45,8 +59,8 @@ function upgradeItems(srvResponse, method, itemId=undefined) {
 
         let controlPanelDiv = `
         <div class="control-panel">
-            <button type="button" class="btn btn-success my-2 my-sm-0">Change</button>
-            <button type="button" class="btn btn-warning my-2 my-sm-0">Delete</button>
+            <a type="button" class="btn btn-success my-2 my-sm-0">Change</a>
+            <a type="button" name="${srvResponse.id}" class="btn btn-warning my-2 my-sm-0" onclick="deleteArticleItem(this)">Delete</a>
         </div>
         `
         html += controlPanelDiv
@@ -66,6 +80,7 @@ function upgradeItems(srvResponse, method, itemId=undefined) {
             </form>
                             
         </div>
+        </div>
         `
         html += formDiv
 
@@ -74,7 +89,9 @@ function upgradeItems(srvResponse, method, itemId=undefined) {
         contentBlock.innerHTML += html
         
     } else if (method=="delete") {
-        let item = document.getElementById(`item`+itemId)
+        let item = document.getElementById(`item-block-`+itemId)
+        console.log(itemId)
+        console.log(item)
         item.innerHTML = html
     }
 }
@@ -243,16 +260,74 @@ async function addArticleItem(element, event) {
 
 async function deleteArticleItem(element) {
     console.log("delete item")
-    const itemId = element.name;
+    let itemId = element.name;
 
     //create and send request
-    let responce = await $.ajax({
+    let response = await $.ajax({
         url: `http://127.0.0.1:8000/ajax/article_update/delete_content_block/`+itemId,
-        method: "DELETE",
+        method: "GET",
         success: function(data){
             if (data.status) {
                 upgradeItems(data, method="delete", itemId=itemId)
             }
         }
+    })
+}
+
+
+// next 2 functions edit global varriable "tagArticleList"
+function addTag(element) {
+    let tagList = document.getElementById("tag-list-container")
+    let html = `
+        <a type="button" href="#!" name="${element.name}" id="tag-item-${element.name}" class="btn btn-outline-success article-tag"><b>#${element.getAttribute("data-tagName")}</b></a>
+        <a type="button" class="btn btn-success my-2 my-sm-0" data-tagName="${element.name}" onclick="deleteTag(this)">X</a>
+        `
+    if (tagArticleList.indexOf(element.name)>=0) {
+        alert("tag just here")
+    } else {
+        console.log("no")
+        tagList.innerHTML += html
+        tagArticleList.push(element.name)
+    }
+    
+    console.log(tagArticleList)   
+}
+
+
+function deleteTag(element) {
+    let htmlTag = document.getElementById("tag-item-"+element.getAttribute("data-tagName"))
+    console.log(htmlTag)
+    let indexElement = tagArticleList.indexOf(element.getAttribute("data-tagName"))
+    console.log(indexElement)
+    tagArticleList.splice(indexElement, 1)
+    console.log(tagArticleList)
+    htmlTag.style = "display: none"
+    element.style = "display: none"
+}
+
+async function editArticleTags(element) {
+    const article = element.getAttribute("data-article");
+    const url = `http://127.0.0.1:8000/ajax/article_update/edit_article_tags/`+article;
+    csrftoken = getCookie('csrftoken')
+    data = new FormData()
+    data.append("csrfmiddlewaretoken", csrftoken)
+    data.append("tags", tagArticleList);
+    //create request
+    let respose = await $.ajax({
+        url: url,
+        method: "POST",
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        mimeType: "multipart/form-data",
+        success: function(data){
+            // update block
+            //console.dir(data);
+            if (data.status) {
+                upgradeItems(data, method="add")
+            }
+        },
     })
 }

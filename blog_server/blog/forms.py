@@ -99,6 +99,22 @@ class CreateArticleItem(forms.ModelForm):
 ArticleItemFormSet = inlineformset_factory(Article, ArticleItem, form=CreateArticleItem, extra=1, min_num=5)
 
 
+class EditArticleTags(forms.Form):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=Tag.objects.all(),
+        required=False,
+        to_field_name='name',
+        widget=forms.SelectMultiple(attrs={
+            'class': "form-select",
+            'name': "tags",
+            'multiple': 'true',
+            'aria-label': 'select tags'
+            }))
+    
+    class Meta:
+        field = ('tags')
+
+
 class EditArticle(forms.ModelForm):
 
     widgets = {'title': forms.TextInput(attrs={'class': "form-control py-4", 'placeholder': 'Enter a title'}),

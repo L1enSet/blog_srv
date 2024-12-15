@@ -4,7 +4,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
 from blog.models import Article, ArticleLike, Comment, CommentLike, ArticleItem
-from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage
+from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage, EditArticleTags
 from users.models import User
 
 
@@ -155,10 +155,14 @@ def add_block(request, article):
         "id": item_obj.id,
         }
     
-    if item_obj.image.url:
-        response['img'] = item_obj.image.url
-    if item_obj.text:
-        response['text'] = item_obj.text
+    try:
+        if item_obj.image.url:
+            response['img'] = item_obj.image.url
+        if item_obj.text:
+            response['text'] = item_obj.text
+    except ValueError as exc:
+        if item_obj.text:
+            response['text'] = item_obj.text
 
     return JsonResponse(response)
 
@@ -221,6 +225,13 @@ def delete_article_item(request, item):
         data['status'] = 'error'
         data['error'] = exc
     
+    return JsonResponse(data)
+
+
+@login_required
+def edit_article_tags(request, article):
+    print(request.POST)
+    data = {}
     return JsonResponse(data)
         
 
