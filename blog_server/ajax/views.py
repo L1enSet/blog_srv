@@ -230,9 +230,22 @@ def delete_article_item(request, item):
 
 @login_required
 def edit_article_tags(request, article):
-    print(request.POST)
-    data = {}
-    return JsonResponse(data)
+
+    article_object = Article.objects.get(slug=article)
+    tags = list(request.POST['tags'].split(","))
+    status = None
+
+    try:
+        article_object.tags.set(tags)
+        article_object.save()
+        status = "succes"
+    except Exception as exc:
+        status = "error"
+
+    return JsonResponse({
+        'status': status,
+        'tags': article_object.tags.all()
+    })
         
 
 
