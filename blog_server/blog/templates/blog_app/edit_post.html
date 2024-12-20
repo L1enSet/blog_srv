@@ -54,20 +54,35 @@
                         </div>
                     {% endif %}
                     {% if item.text %}
-                        <div class="text-block">
-                            <p id="item-text-{{ item.id }}">{{ item.text }}</p>
-                        </div>
+                        {% if item.source_code %}
+                            <pre><code class="prettyprint lang-{{ item.source_code }}">
+                                {{item.text}}
+                            </code></pre>
+                        {% else %}
+                            <div class="text-block">
+                                <p id="item-text-{{ item.id }}">{{ item.text }}</p>
+                            </div>
+                        {% endif %}
                     {% endif %}
                     <div class="control-panel">
                         <a type="button" class="btn btn-success my-2 my-sm-0" name="{{ item.id }}" onclick="showForm(this)">Change</a>
                         <a type="button" name={{ item.id }} class="btn btn-warning my-2 my-sm-0" onclick="deleteArticleItem(this)">Delete</a>
                     </div>
-                    <div class="item-edit-form form-element">
+                    <div class="item-edit-form form-element" id="form-block-{{ item.id }}">
                         <form id="{{ item.id }}" name="{{ article.slug }}" onsubmit="editArtcleItem(this, event)">
                             {% csrf_token%}
                             <div class="mb-3">
                                 <label for="itemImageForm{{ item.id }}" class="form-label">Item image</label>
                                 <input class="form-control" type="file" name="image" id="itemImageForm{{ item.id }}">
+                            </div>
+                            <div>
+                                <label for="itemCode-{{ item.id }}" class="form-label">Item code</label>
+                                <select class="form-select" id="itemCode-{{ item.id }}" name="code" aria-label="Default select example">
+                                    <option selected>Open this select menu</option>
+                                    {% for i in source_code %}
+                                        <option value="{{ i.name }}">{{ i.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="itemTextForm{{ item.id }}" class="form-label">Item text</label>
@@ -92,7 +107,7 @@
                     <label for="itemTextForm{{ item.id }}" class="form-label">Item text</label>
                     <textarea class="form-control" name="text" id="itemTextImageForm{{ item.id }}" rows="3"></textarea>
                 </div>
-                <button type="submit">Изменить</button>
+                <button type="submit">Добвить</button>
             </form>
         </div>
         <div class="container form-block">
@@ -125,9 +140,6 @@
                 </ul>
                 <a type="button" data-article="{{ article.slug }}" class="btn btn-success my-2 my-sm-0" onclick="editArticleTags(this)">Send</a>
             </div>
-        </div>
-        <div class="container form-block">
-            <h4>settings</h4>
         </div>
 
     </div>

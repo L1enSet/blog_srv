@@ -18,6 +18,16 @@
         {% if user.is_superuser %}
           <div class="container mt-3">
             <a type="button" class="btn btn-success my-2 my-sm-0" href="{% url 'blog_app:edit_article' article_slug=article.slug %}">Edit post</a>
+            {% if article.comments_on %}
+              <a type="button" class="btn btn-success my-2 my-sm-0" href="{% url 'blog_app:set_state' article=article.slug setting_type='comment' %}">Disable comments</a>
+            {% else %}
+              <a type="button" class="btn btn-warning my-2 my-sm-0" href="{% url 'blog_app:set_state' article=article.slug setting_type='comment' %}">Enable comments</a>
+            {% endif %}
+            {% if article.is_published %}
+              <a type="button" class="btn btn-warning my-2 my-sm-0" href="{% url 'blog_app:set_state' article=article.slug setting_type='public' %}">Unpublished</a>
+            {% else %}
+              <a type="button" class="btn btn-success my-2 my-sm-0" href="{% url 'blog_app:set_state' article=article.slug setting_type='public' %}">Published</a>
+            {% endif %}
           </div>
         {% endif %}
 
@@ -33,9 +43,16 @@
                     <img src="{{ p.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
                   </div>
                 {% endif %}
-                <p class="w-100">
-                  {{ p.text }}
-                </p>
+                
+                {% if p.source_code %}
+                  <pre><code class="prettyprint lang-{{ p.source_code }}">
+                    {{ p.text }}
+                  </code></pre>
+                {% else %}
+                  <p class="w-100">
+                    {{ p.text }}
+                  </p>
+                {% endif %}
               </div>
           {% endfor %}
 
@@ -179,6 +196,11 @@
       {% endif %}      
     </div>
 {% endblock %}
+<style>
+  li.L0, li.L1, li.L2, li.L3,
+  li.L5, li.L6, li.L7, li.L8
+  { list-style-type: decimal !important }
+</style>
 {% block page_script %}
     <script src="{% static 'detail_post_page.js' %}"></script>
 {% endblock%}

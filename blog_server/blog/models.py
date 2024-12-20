@@ -1,5 +1,6 @@
 from string import ascii_letters
 from random import randint
+from datetime import datetime
 
 from django.db import models
 from django.urls import reverse
@@ -29,10 +30,16 @@ class Tag(models.Model):
         return tag_lst
 
 
+class Code(models.Model):
+    name = models.CharField(max_length=128, primary_key=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Article(models.Model):
     title = models.CharField(max_length=256, blank=True, default=None)
     intro = models.TextField(blank=True, default=None)
-    #text = models.TextField(default=None, blank=True, null=True)
     image = models.ImageField(upload_to='post_images', default=None, blank=True)
     slug = models.SlugField(null=False, unique=True, default=gen_slug())
     date = models.DateTimeField(auto_now_add=True)
@@ -66,6 +73,14 @@ class Article(models.Model):
             print(tag.name)
             self.tags.add(tag)
     
+    def date_update(self):
+        try:
+            self.date = datetime.now()
+            return 0
+        except Exception as exc:
+            return exc
+
+    
     def create_article(self):
         new = self.objects.create()
         return self.get_absolute_url(new)
@@ -74,6 +89,7 @@ class Article(models.Model):
 class ArticleItem(models.Model):
     article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images', null=True, blank=True, default=None)
+    source_code = models.ForeignKey(to=Code, on_delete=models.CASCADE)
     text = models.TextField(null=True, blank=True, default=None)
 
 

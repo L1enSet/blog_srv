@@ -128,9 +128,7 @@ def add_block(request, article):
     #valid file
     try:
         fss = FileSystemStorage()
-        fss.path("post_images")
         filename = fss.save(name = image.name, content=image)
-        url = fss.url(filename)
     except AttributeError:
         filename = None
 
@@ -230,11 +228,10 @@ def delete_article_item(request, item):
 
 @login_required
 def edit_article_tags(request, article):
-
+    
     article_object = Article.objects.get(slug=article)
     tags = list(request.POST['tags'].split(","))
     status = None
-
     try:
         article_object.tags.set(tags)
         article_object.save()
@@ -244,11 +241,8 @@ def edit_article_tags(request, article):
 
     return JsonResponse({
         'status': status,
-        'tags': article_object.tags.all()
     })
         
-
-
 
 @login_required
 def delete_comment(request, comment):

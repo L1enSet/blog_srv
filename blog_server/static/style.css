@@ -22,7 +22,7 @@ body {
 	background-color: aquamarine;
 	margin: 5px;
 	padding: 5px;
-	display: none;
+	display: block;
 }
 
 .article {

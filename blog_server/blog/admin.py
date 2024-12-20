@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Tag, Comment, MyLink, AboutMe, Technology, View, CommentLike, ArticleLike, ArticleItem
+from .models import Article, Tag, Comment, MyLink, AboutMe, Technology, View, CommentLike, ArticleLike, ArticleItem, Code
 
 admin.site.register(Article)
 admin.site.register(ArticleItem)
@@ -11,4 +11,4 @@ admin.site.register(Technology)
 admin.site.register(View)
 admin.site.register(ArticleLike)
 admin.site.register(CommentLike)
-
+admin.site.register(Code)

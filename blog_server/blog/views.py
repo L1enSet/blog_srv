@@ -1,5 +1,5 @@
 from typing import Any
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, TemplateView
 from django.db.utils import IntegrityError
 from random import randint
@@ -7,7 +7,7 @@ from .forms import CreateArticle, CommentForm, CreateArticleItem, EditArticleTit
 from users.forms import UserLogin
 from .models import Tag
 from django.shortcuts import render
-from .models import ArticleItem, Article
+from .models import ArticleItem, Article, Code
 from .utils import *
 
 
@@ -157,8 +157,10 @@ class ViewCreateArticle(LoginRequiredMixin, TemplateView, TextMixin, DataMixin):
         return render(request, "blog_app/create_article.html", context)"""
 
 
-class ViewEditArticle(LoginRequiredMixin, UpdateView, DataMixin):
+class ViewEditArticle(PermissionRequiredMixin, LoginRequiredMixin, UpdateView, DataMixin):
     model = Article
+    login_url = '/login/'
+    permission_required = 'blog.chancge_article'
     form_class = CreateArticle
     template_name = "blog_app/edit_post.html"
     slug_url_kwarg = 'article_slug'
@@ -170,8 +172,33 @@ class ViewEditArticle(LoginRequiredMixin, UpdateView, DataMixin):
         context['form_title'] = EditArticleTitle()
         context['form_image'] = EditArticleImage()
         context['form_tags'] = EditArticleTags()
+        context['source_code'] = Code.objects.all()
         context2 = DataMixin.get_context_data(self, request=self.request)
         return context | context2
+
+@login_required
+def set_state(request, article, setting_type):
+    user = auth.get_user(request)
+    obj = Article.objects.get(slug=article)
+    response = HttpResponseRedirect(obj.get_absolute_url())
+
+    if user.is_superuser:
+        if setting_type=='comment':
+            if obj.comments_on==True:
+                obj.comments_on = False
+            else:
+                obj.comments_on = True
+        elif setting_type=='public':
+            if obj.is_published == True:
+                obj.is_published = False
+            else:
+                obj.is_published = True
+                obj.date_update()
+        obj.save()
+    
+    return response
+    
+        
 
 
 

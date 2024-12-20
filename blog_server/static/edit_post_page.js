@@ -23,11 +23,14 @@ function select_tag(element) {
 
 
 function showForm(element) {
-    console.log("1")
-    form = document.getElementById(element.name)
-    console.log("2")
-    form.style.display = ''
-    console.log("3")
+    form = document.getElementById("form-block-"+element.name)
+    console.log(form.style.getPropertyValue('display'))
+    if (form.style.display == 'none') {
+        form.style.display = 'block'
+    } else if(form.style.display == 'block') {
+        form.style.display = 'none'
+    }
+    
 }
 
 
@@ -309,6 +312,7 @@ async function editArticleTags(element) {
     const article = element.getAttribute("data-article");
     const url = `http://127.0.0.1:8000/ajax/article_update/edit_article_tags/`+article;
     csrftoken = getCookie('csrftoken')
+
     data = new FormData()
     data.append("csrfmiddlewaretoken", csrftoken)
     data.append("tags", tagArticleList);
