@@ -83,7 +83,7 @@ class Article(models.Model):
     
     def create_article(self):
         new = self.objects.create()
-        return self.get_absolute_url(new)
+        return new
 
 
 class ArticleItem(models.Model):

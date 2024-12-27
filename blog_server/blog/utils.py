@@ -1,4 +1,5 @@
 from .models import *
+from string import ascii_letters
 from random import randint
 from users.forms import UserLogin, UserRegistration
 from .models import Tag, ArticleLike, CommentLike, Comment
@@ -13,7 +14,7 @@ def gen_slug():
     slug = ""
     for i in range(0,20):
         abc = ascii_letters
-        index = randint(0, len(abc))
+        index = randint(0, len(abc)-1)
         slug += ascii_letters[index]
         
     return slug

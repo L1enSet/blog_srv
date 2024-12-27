@@ -6,9 +6,38 @@ from random import randint
 from .forms import CreateArticle, CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage, EditArticleTags
 from users.forms import UserLogin
 from .models import Tag
+from datetime import datetime
 from django.shortcuts import render
-from .models import ArticleItem, Article, Code
+from .models import ArticleItem, Article, Code, gen_slug
 from .utils import *
+
+
+def create_article(request):
+    response_url = 'index'
+    if request.method == 'GET':
+        if request.user.is_superuser:
+            title = None
+            intro = None
+            image = None
+            slug=gen_slug()
+            date = datetime.now()
+            tags = None
+            comments_on = False
+            is_published = False
+            obj = Article()
+            obj.title = title
+            obj.intro = None
+            obj.image = None
+            obj.slug=gen_slug()
+            obj.date = datetime.now()
+            obj.tags.set(None)
+            obj.comments_on = False
+            obj.is_published = False
+            obj.save()
+            return obj.get_absolute_url
+    else:
+        return HttpResponseRedirect(reverse(response_url))
+            
 
 
 class ListArticles(DataMixin, ListView):   
@@ -197,6 +226,7 @@ def set_state(request, article, setting_type):
         obj.save()
     
     return response
+
     
         
 
