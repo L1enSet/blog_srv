@@ -122,7 +122,7 @@ def add_block(request, article):
     text = request.POST['text']
     image = request.FILES.get("file")
     status = None
-    error = None
+    error = "no error"
     print(request.POST)
     
     #valid file
