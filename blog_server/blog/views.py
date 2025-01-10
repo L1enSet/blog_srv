@@ -30,7 +30,7 @@ def create_article(request):
             obj.image = None
             obj.slug=gen_slug()
             obj.date = datetime.now()
-            obj.tags.set(None)
+            #obj.tags.set(None)
             obj.comments_on = False
             obj.is_published = False
             obj.save()
