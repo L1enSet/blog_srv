@@ -7,7 +7,6 @@ from .forms import CreateArticle, CommentForm, CreateArticleItem, EditArticleTit
 from users.forms import UserLogin
 from .models import Tag
 from datetime import datetime
-from django.shortcuts import render
 from .models import ArticleItem, Article, Code, gen_slug
 from .utils import *
 
@@ -16,29 +15,12 @@ def create_article(request):
     response_url = 'index'
     if request.method == 'GET':
         if request.user.is_superuser:
-            title = None
-            intro = None
-            image = None
-            slug=gen_slug()
-            date = datetime.now()
-            tags = None
-            comments_on = False
-            is_published = False
-            obj = Article()
-            obj.title = title
-            obj.intro = None
-            obj.image = None
-            obj.slug=gen_slug()
-            obj.date = datetime.now()
-            #obj.tags.set(None)
-            obj.comments_on = False
-            obj.is_published = False
-            obj.save()
-            return obj.get_absolute_url
+            obj = Article.objects.create(title="", intro="")
+            
+            return HttpResponseRedirect(obj.get_absolute_url())
     else:
         return HttpResponseRedirect(reverse(response_url))
             
-
 
 class ListArticles(DataMixin, ListView):   
     model = Article
@@ -198,7 +180,7 @@ class ViewEditArticle(PermissionRequiredMixin, LoginRequiredMixin, UpdateView, D
         context = super().get_context_data(request=self.request)
         context['article'] = self.get_object()
         context['content_blocks'] = ArticleItem.objects.filter(article=self.get_object())
-        context['form_title'] = EditArticleTitle()
+        context['form_title'] = EditArticleTitle(data={'title': self.get_object().title})
         context['form_image'] = EditArticleImage()
         context['form_tags'] = EditArticleTags()
         context['source_code'] = Code.objects.all()

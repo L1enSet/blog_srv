@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.files.storage import FileSystemStorage
-from blog.models import Article, ArticleLike, Comment, CommentLike, ArticleItem
+from django.db.utils import IntegrityError
+from blog.models import Article, ArticleLike, Comment, CommentLike, ArticleItem, Code
 from blog.forms import CommentForm, CreateArticleItem, EditArticleTitle, EditArticleImage, EditArticleTags
 from users.models import User
 
@@ -120,6 +121,7 @@ def add_block(request, article):
     article_obj = Article.objects.get(slug=article)
     item_obj = ArticleItem()
     text = request.POST['text']
+    code = request.POST['source_code']
     image = request.FILES.get("file")
     status = None
     error = "no error"
@@ -137,6 +139,7 @@ def add_block(request, article):
         item_obj.article = article_obj
 
         if text != None and text != "":
+            item_obj.source_code = Code.objects.get(name=code)
             item_obj.text = text
         if filename != None:
             item_obj.image = filename
@@ -144,7 +147,7 @@ def add_block(request, article):
         status = 'success'
     except Exception as exc:
         status = 'error'
-        error = exc
+        print(exc)
     
     #create response
     response = {
@@ -157,12 +160,16 @@ def add_block(request, article):
         if item_obj.image.url:
             response['img'] = item_obj.image.url
         if item_obj.text:
+            response['source_code'] = item_obj.source_code
             response['text'] = item_obj.text
     except ValueError as exc:
         if item_obj.text:
             response['text'] = item_obj.text
 
-    return JsonResponse(response)
+    try:
+        return JsonResponse(response)
+    except IntegrityError as exc:
+        print(exc)
 
 
 @login_required
@@ -179,6 +186,7 @@ def edit_block(request, article):
     item_obj = ArticleItem.objects.get(id=request.POST['item'])
     text = request.POST['text']
     image = request.FILES.get("file")
+    code = request.POST['code']
     status = None
     error = None
     print(request.POST)
@@ -198,6 +206,8 @@ def edit_block(request, article):
             item_obj.text = text
         if filename != None:
             item_obj.image = filename
+        if code != None:
+            item_obj.source_code = Code.objects.get(name=code)
         item_obj.save()
         status = 'success'
     except Exception as exc:
@@ -207,7 +217,7 @@ def edit_block(request, article):
     return JsonResponse({
         "status": status,
         "error": error,
-        "img": item_obj.image.url,
+        "img": item_obj.image.url if item_obj.image else None,
         "text": item_obj.text,
         })
 

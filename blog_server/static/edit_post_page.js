@@ -184,11 +184,13 @@ async function editArtcleItem(element, event) {
     //get form data
     let file = element.image.files[0];
     let text = element.text.value;
+    let code = element.code.value;
     let data = new FormData();
 
     data.append("file", file);
     data.append("text", text);
     data.append("item", form_id);
+    data.append("code", code);
     data.append("csrfmiddlewaretoken", csrftoken);
     console.log(data);
 
@@ -209,7 +211,6 @@ async function editArtcleItem(element, event) {
                 newImageUrl = `http://127.0.0.1:8000`+data.img;
                 imageElement = document.getElementById("item-image-"+form_id);
                 imageElement.src = newImageUrl;
-
                 textElement = document.getElementById("item-text-"+form_id);
                 textElement.textContent = data.text;
                 //console.log(newImageUrl);
@@ -232,10 +233,12 @@ async function addArticleItem(element, event) {
     //get form data
     let file = element.image.files[0];
     let text = element.text.value;
+    let source_code = element.code.value;
     let data = new FormData();
 
     data.append("file", file);
     data.append("text", text);
+    data.append("source_code", source_code);
     data.append("csrfmiddlewaretoken", csrftoken);
     console.log(data); 
 

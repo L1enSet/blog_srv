@@ -9,12 +9,6 @@
         <div class="container form-block">
             <h4>title</h4>
             <div>
-                <div class="current">
-                    <h3 id="title{{article.slug}}">{{ article.title }}</h3>
-                </div>
-                <div class="btn-block">
-                    <a type="button" class="btn btn-success my-2 my-sm-0">change</a>
-                </div>
                 <div class="form-element">
                     <form id="title_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateTitle(this, event)" enctype="multipart/form-data" novalidate="true">
                         {% csrf_token %}
@@ -78,15 +72,18 @@
                             <div>
                                 <label for="itemCode-{{ item.id }}" class="form-label">Item code</label>
                                 <select class="form-select" id="itemCode-{{ item.id }}" name="code" aria-label="Default select example">
-                                    <option selected>Open this select menu</option>
                                     {% for i in source_code %}
+                                        {% if i == item.source_code %}
+                                            <option selected value={{ i.name }}>{{ i.name }}</option>
+                                        {% else %}
                                         <option value="{{ i.name }}">{{ i.name }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="itemTextForm{{ item.id }}" class="form-label">Item text</label>
-                                <textarea class="form-control" name="text" id="itemTextForm{{ item.id }}" rows="3"></textarea>
+                                <textarea class="form-control" name="text" id="itemTextForm{{ item.id }}" rows="3">{{ item.text }}</textarea>
                             </div>
                             <button type="submit">Изменить</button>
                         </form>
@@ -102,6 +99,18 @@
                 <div class="mb-3">
                     <label for="addItemImageForm{{ article.slug }}" class="form-label">Item image</label>
                     <input class="form-control" type="file" name="image" id="addItemForm{{ article.slug }}">
+                </div>
+                <div>
+                    <label for="itemCode-{{ item.id }}" class="form-label">Item code</label>
+                    <select class="form-select" id="itemCode-{{ item.id }}" name="code" aria-label="Default select example">
+                        {% for i in source_code %}
+                            {% if i == 'text' %}
+                                <option selected value={{ i.name }}>{{ i.name }}</option>
+                            {% else %}
+                            <option value="{{ i.name }}">{{ i.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label for="itemTextForm{{ item.id }}" class="form-label">Item text</label>

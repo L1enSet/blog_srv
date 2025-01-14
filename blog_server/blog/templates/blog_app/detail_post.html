@@ -44,11 +44,13 @@
                   </div>
                 {% endif %}
                 
-                {% if p.source_code %}
-                  <pre><code class="prettyprint lang-{{ p.source_code }}">
-                    {{ p.text }}
-                  </code></pre>
-                {% else %}
+                {% if p.source_code.name != 'text' %}
+                  <div class="code-area">
+                    <pre><code class="prettyprint lang-{{ p.source_code }}">
+                      {{ p.text }}
+                    </code></pre>
+                  </div>
+                {% elif p.source_code.name == 'text' %}
                   <p class="w-100">
                     {{ p.text }}
                   </p>

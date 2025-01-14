@@ -89,7 +89,7 @@ class Article(models.Model):
 class ArticleItem(models.Model):
     article = models.ForeignKey(to=Article, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='post_images', null=True, blank=True, default=None)
-    source_code = models.ForeignKey(to=Code, on_delete=models.CASCADE)
+    source_code = models.ForeignKey(to=Code, on_delete=models.CASCADE, null=True)
     text = models.TextField(null=True, blank=True, default=None)
 
 

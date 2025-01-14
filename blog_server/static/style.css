@@ -60,6 +60,13 @@ body {
     margin: 5px;
 }
 
+.code-area {
+	padding: 10px;
+	background-color: aliceblue;
+	border-radius: 10px;
+	box-shadow: 0px 0px 20px black;
+}
+
 .article-text {
 	font-size: 20px;
 }
