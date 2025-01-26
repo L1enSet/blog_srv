@@ -50,7 +50,7 @@
                       {{ p.text }}
                     </code></pre>
                   </div>
-                {% elif p.source_code.name == 'text' %}
+                {% elif p.source_code.name == 'text' and p.text != None %}
                   <p class="w-100">
                     {{ p.text }}
                   </p>

@@ -84,6 +84,14 @@ def add_article_title(request, article):
 
 
 @login_required
+def editIntro(request, article):
+    article_obj = Article.objects.get(slug=article)
+    data = json.loads(request.body)
+    status = None
+    err = None #тут остановился
+
+
+@login_required
 def add_article_image(request, article):
     form = EditArticleImage()
     article_obj = Article.objects.get(slug=article)
@@ -133,10 +141,12 @@ def add_block(request, article):
         filename = fss.save(name = image.name, content=image)
     except AttributeError:
         filename = None
+    #print("filename is - ", filename)
 
     #valid form
     try:
         item_obj.article = article_obj
+        item_obj.source_code = Code.objects.get(name="text")
 
         if text != None and text != "":
             item_obj.source_code = Code.objects.get(name=code)
@@ -160,7 +170,7 @@ def add_block(request, article):
         if item_obj.image.url:
             response['img'] = item_obj.image.url
         if item_obj.text:
-            response['source_code'] = item_obj.source_code
+            response['source_code'] = item_obj.source_code.name
             response['text'] = item_obj.text
     except ValueError as exc:
         if item_obj.text:
