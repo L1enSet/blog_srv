@@ -86,10 +86,25 @@ def add_article_title(request, article):
 @login_required
 def editIntro(request, article):
     article_obj = Article.objects.get(slug=article)
-    data = json.loads(request.body)
+    data = request.POST
+    print("1", data["intro"])
     status = None
-    err = None #тут остановился
-
+    err = None
+    
+    try:
+        article_obj.intro = data["intro"]
+        article_obj.save()
+        status = "success"
+    except Exception as exc:
+        status = "Error"
+        err = 'ree'
+        print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", err)
+    
+    return JsonResponse({
+        "status": status,
+        "err": err,
+        "intro": article_obj.intro,
+        })
 
 @login_required
 def add_article_image(request, article):

@@ -33,6 +33,9 @@
 
         <div class="card-body">
           <h4 class="card-title">{{ article.title }}</h4>
+          <div class="d-flex justify-content-center">
+            <img src="{{ article.image.url }}" class="img-fluid mt-2 ml-2" alt="Responsive image" height="600" width="98%">
+          </div>
           <div class="container mb-3 ml-3 shorttext">
             <p>{{ article.intro }}</p>
           </div>

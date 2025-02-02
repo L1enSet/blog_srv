@@ -24,7 +24,7 @@
             <h4>Intro</h4>
             <div>
                 <div class="form-element">
-                    <form>
+                    <form id="intro_form" name="{{ article.slug }}" onsubmit="sendAjaxUpdateIntro(this, event)" enctype="multipart/form-data" novalidate="true">
                         <textarea class="form-control" name="introtext" id="introTextForm" rows="3">{{ article.intro }}</textarea>
                         <button type="submit" class="btn btn-success my-2 my-sm-0">Send</button>
                     </form>

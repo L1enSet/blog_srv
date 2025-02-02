@@ -138,6 +138,33 @@ async function sendAjaxUpdateTitle(element, event) {
 }
 
 
+async function sendAjaxUpdateIntro(element, event) {
+    event.preventDefault();
+    const article_slug = element.name;
+    const url = `http://127.0.0.1:8000/ajax/article_update/edit_intro/`+article_slug;
+    const csrftoken = getCookie('csrftoken');
+    let data = new FormData();
+    data.append("csrfmiddlewaretoken", csrftoken);
+    data.append("intro", element.introtext.value)
+
+    let response = await $.ajax({
+        url: url,
+        method: "POST",
+        data: data,
+        cache: false,
+        processData: false,
+        contentType: false,
+        dataType: 'json',
+        mimeType: "multipart/form-data",
+        success: function(data) {
+            console.log("success!!!!!!!");
+        }
+
+    });
+    return 0;
+}
+
+
 async function sendAjaxUpdateImage(element, event) {
     event.preventDefault();
     const article_slug = element.name;
